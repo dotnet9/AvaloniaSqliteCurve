@@ -1,0 +1,47 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AvaloniaSqliteCurve.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="450"
+        x:Class="AvaloniaSqliteCurve.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico" Padding="20"
+        Title="测试大数据读写SQLite、曲线绘制">
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+    <Window.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="20 0 0 0"></Setter>
+        </Style>
+        <Style Selector="Button">
+            <Setter Property="Margin" Value="5 0" />
+        </Style>
+        <Style Selector="ToggleSwitch">
+            <Setter Property="Margin" Value="5 0" />
+        </Style>
+    </Window.Styles>
+    <Grid RowDefinitions="Auto, Auto, Auto, *">
+        <Grid ColumnDefinitions="Auto, 700, Auto, Auto, Auto, *">
+            <TextBlock Text="数据目录：" />
+            <TextBox Grid.Column="1" Text="{Binding DataDir}" />
+            <Button Content="修改" Grid.Column="2" Command="{Binding ExecuteChoiceFolderHandle}" />
+            <Button Content="打开" Grid.Column="3" Command="{Binding ExecuteOpenFolderHandle}" />
+        </Grid>
+        <Grid Grid.Row="1" Margin="0 15" ColumnDefinitions="Auto, 70, Auto, 70, Auto, *">
+            <TextBlock Text="模拟点数：" />
+            <TextBox Grid.Column="1" Text="{Binding PointCount}" />
+            <TextBlock Grid.Column="2" Text="更新频率(ms)：" />
+            <TextBox Grid.Column="3" Text="500" />
+            <Button Content="{Binding RunningContent}" Grid.Column="4" Command="{Binding ExecuteRunningHandle}" />
+        </Grid>
+        <Grid Grid.Row="2" ColumnDefinitions="Auto, 70, Auto, 70, Auto, *">
+            <TextBlock Text="曲线点数：" />
+            <TextBox Grid.Column="1" Text="16" />
+            <ToggleSwitch Grid.Column="2" OnContent="实时数据" OffContent="历史数据"></ToggleSwitch>
+        </Grid>
+    </Grid>
+</Window>

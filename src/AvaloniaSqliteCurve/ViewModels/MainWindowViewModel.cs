@@ -3,6 +3,7 @@ using AvaloniaSqliteCurve.Services;
 using ReactiveUI;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AvaloniaSqliteCurve.ViewModels;
@@ -26,6 +27,14 @@ public class MainWindowViewModel : ViewModelBase
     {
         get => _pointCount;
         set => this.RaiseAndSetIfChanged(ref _pointCount, value);
+    }
+
+    private int _updateMilliseconds = 500;
+
+    public int UpdateMilliseconds
+    {
+        get => _updateMilliseconds;
+        set => this.RaiseAndSetIfChanged(ref _updateMilliseconds, value);
     }
 
     private bool _isRunning;
@@ -118,5 +127,16 @@ public class MainWindowViewModel : ViewModelBase
             new Point($"DPoint{index.ToString($"D{pointCountStrLen}")}", (int)PointType.Double)).ToList();
         await _dbService.BulkInsertAsync(intPoints);
         await _dbService.BulkInsertAsync(doublePoints);
+    }
+
+    private async Task UpdateData(CancellationToken cancellationToken)
+    {
+        await Task.Run(async () =>
+        {
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                await Task.Delay(TimeSpan.FromMilliseconds(UpdateMilliseconds), cancellationToken);
+            }
+        }, cancellationToken);
     }
 }

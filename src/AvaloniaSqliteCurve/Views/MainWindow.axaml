@@ -35,7 +35,7 @@
             <TextBlock Text="模拟点数：" />
             <TextBox Grid.Column="1" Text="{Binding PointCount}" />
             <TextBlock Grid.Column="2" Text="更新频率(ms)：" />
-            <TextBox Grid.Column="3" Text="500" />
+            <TextBox Grid.Column="3" Text="{Binding UpdateMilliseconds}" />
             <Button Content="{Binding RunningContent}" Grid.Column="4" Command="{Binding ExecuteRunningHandle}" />
         </Grid>
         <Grid Grid.Row="2" ColumnDefinitions="Auto, 70, Auto, 70, Auto, *">

@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AvaloniaSqliteCurve.Helpers;
 
 namespace AvaloniaSqliteCurve.ViewModels;
 
@@ -175,7 +176,7 @@ public class MainWindowViewModel : ViewModelBase
                 return new PointValue()
                 {
                     PointId = id, Value = value, Status = Random.Shared.Next(0, 7),
-                    UpdateTime = Random.Shared.Next(0, 1000000000)
+                    UpdateTime = DateTime.Now.ToUtcTimestamp()
                 };
             }).ToList();
             stopwatch.Stop();

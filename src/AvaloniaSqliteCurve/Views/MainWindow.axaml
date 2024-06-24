@@ -1,6 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:AvaloniaSqliteCurve.ViewModels"
+        xmlns:views="using:AvaloniaSqliteCurve.Views"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="450"
@@ -43,5 +44,6 @@
             <TextBox Grid.Column="1" Text="16" />
             <ToggleSwitch Grid.Column="2" OnContent="实时数据" OffContent="历史数据"></ToggleSwitch>
         </Grid>
+        <views:PointCharts Grid.Row="3"/>
     </Grid>
 </Window>

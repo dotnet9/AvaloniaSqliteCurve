@@ -7,6 +7,8 @@ namespace AvaloniaSqliteCurve.Services
     internal interface IDbService
     {
         void ChangeDataFolder(string? folder);
+        Task<IEnumerable<int>> GetPointIdsAsync();
         Task BulkInsertAsync(List<Point> points);
+        Task BulkInsertAsync(List<PointValue> pointValues);
     }
 }

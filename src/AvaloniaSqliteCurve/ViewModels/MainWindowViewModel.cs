@@ -2,6 +2,8 @@
 using AvaloniaSqliteCurve.Services;
 using ReactiveUI;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,6 +15,8 @@ public class MainWindowViewModel : ViewModelBase
     private IFileChooserService? _fileChooserService;
     private INotificationService? _notificationService;
     private readonly IDbService _dbService = new DbService();
+    private CancellationTokenSource? _cancellationTokenSource;
+    private Task? _longRunningTask;
     private string? _dataDir;
 
     public string? DataDir
@@ -55,17 +59,7 @@ public class MainWindowViewModel : ViewModelBase
 
     public MainWindowViewModel()
     {
-        this.WhenAnyValue(x => x.IsRunning).Subscribe(newValue =>
-        {
-            if (newValue)
-            {
-                RunningContent = "停止生成数据";
-            }
-            else
-            {
-                RunningContent = "开始生成数据";
-            }
-        });
+        this.WhenAnyValue(x => x.IsRunning).Subscribe(newValue => { RunningContent = newValue ? "停止生成数据" : "开始生成数据"; });
         this.WhenAnyValue(x => x.DataDir).Subscribe(_dbService.ChangeDataFolder);
         DataDir = System.IO.Path.Combine($"{AppDomain.CurrentDomain.BaseDirectory}", "Data");
     }
@@ -104,8 +98,34 @@ public class MainWindowViewModel : ViewModelBase
         {
             if (IsRunning)
             {
-                await CreateBasePointAsync();
+                var pointIds = await CreateBasePointAsync();
+                if (pointIds?.Count > 0)
+                {
+                    _cancellationTokenSource = new CancellationTokenSource();
+                    var token = _cancellationTokenSource.Token;
+                    _longRunningTask = Task.Run(() => UpdateData(pointIds, token), token);
+                }
+                else
+                {
+                    IsRunning = false;
+                }
+
+                return;
             }
+
+            await _cancellationTokenSource!.CancelAsync();
+            try
+            {
+                await _longRunningTask!;
+            }
+            catch (OperationCanceledException ex)
+            {
+                _notificationService!.Show(message: $"更新点任务取消");
+            }
+
+            _cancellationTokenSource.Dispose();
+            _cancellationTokenSource = null;
+            _longRunningTask = null;
         }
         catch (Exception ex)
         {
@@ -113,11 +133,22 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
-    private async Task CreateBasePointAsync()
+    private async Task<List<int>?> CreateBasePointAsync()
     {
         if (PointCount <= 0)
         {
-            return;
+            _notificationService!.Show(message: $"请输入生成点数量！");
+            return null;
+        }
+
+        var pointIDs = (await _dbService.GetPointIdsAsync()).ToList();
+        if (pointIDs.Count > 0)
+        {
+            var pointCount = pointIDs.Count;
+            _notificationService!.Show(message: pointCount != (PointCount * 2)
+                ? $"已经生成了{pointCount}个点数据，如需重新生成，请手动删除DB再生成！"
+                : $"已经生成了{pointCount}个点数据！");
+            return pointIDs;
         }
 
         var pointCountStrLen = $"{PointCount}".Length;
@@ -127,16 +158,35 @@ public class MainWindowViewModel : ViewModelBase
             new Point($"DPoint{index.ToString($"D{pointCountStrLen}")}", (int)PointType.Double)).ToList();
         await _dbService.BulkInsertAsync(intPoints);
         await _dbService.BulkInsertAsync(doublePoints);
+        _notificationService!.Show(message: $"生成{PointCount * 2}个点数据！");
+        pointIDs = (await _dbService.GetPointIdsAsync()).ToList();
+        return pointIDs;
     }
 
-    private async Task UpdateData(CancellationToken cancellationToken)
+    private async Task UpdateData(List<int> pointIds, CancellationToken cancellationToken)
     {
-        await Task.Run(async () =>
+        while (!cancellationToken.IsCancellationRequested)
         {
-            while (!cancellationToken.IsCancellationRequested)
+            var stopwatch = Stopwatch.StartNew();
+            var randomValues = Enumerable.Range(0, 5).Select(index => Random.Shared.Next(0, 100)).ToList();
+            var pointValues = pointIds.Select(id =>
             {
-                await Task.Delay(TimeSpan.FromMilliseconds(UpdateMilliseconds), cancellationToken);
-            }
-        }, cancellationToken);
+                var value = randomValues[id % randomValues.Count];
+                return new PointValue()
+                {
+                    PointId = id, Value = value, Status = Random.Shared.Next(0, 7),
+                    UpdateTime = Random.Shared.Next(0, 1000000000)
+                };
+            }).ToList();
+            stopwatch.Stop();
+            Console.WriteLine($"生成数据耗时：{stopwatch.ElapsedMilliseconds}ms");
+
+            stopwatch.Restart();
+            await _dbService.BulkInsertAsync(pointValues);
+            stopwatch.Stop();
+            Console.WriteLine($"插入数据耗时：{stopwatch.ElapsedMilliseconds}ms");
+
+            await Task.Delay(TimeSpan.FromMilliseconds(UpdateMilliseconds), cancellationToken);
+        }
     }
 }

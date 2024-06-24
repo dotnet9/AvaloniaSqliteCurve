@@ -1,4 +1,5 @@
-﻿using AvaloniaSqliteCurve.Entities;
+﻿using Avalonia;
+using AvaloniaSqliteCurve.Entities;
 using Dapper;
 using System;
 using System.Collections.Generic;
@@ -29,8 +30,16 @@ internal class DbService : IDbService
         Directory.CreateDirectory(_folder);
     }
 
+    public async Task<IEnumerable<int>> GetPointIdsAsync()
+    {
+        var connectionString = await CreateDbAndGetConnectionStringAsync(DataTypeKind.BaseDb);
+        await using var connection = new SQLiteConnection(connectionString);
+        const string sql = "SELECT Id FROM POINT";
+        return await connection.QueryAsync<int>(sql);
+    }
 
-    public async Task BulkInsertAsync(List<Point> points)
+
+    public async Task BulkInsertAsync(List<Entities.Point> points)
     {
         var connectionString = await CreateDbAndGetConnectionStringAsync(DataTypeKind.BaseDb);
         await using var connection = new SQLiteConnection(connectionString);
@@ -38,6 +47,18 @@ internal class DbService : IDbService
         var transaction = connection.BeginTransaction();
         const string sql = "INSERT INTO POINT(Name, Type) VALUES(@Name, @Type)";
         await connection.ExecuteAsync(sql, points, transaction: transaction);
+        transaction.Commit();
+    }
+
+    public async Task BulkInsertAsync(List<PointValue> pointValues)
+    {
+        var connectionString = await CreateDbAndGetConnectionStringAsync(DataTypeKind.DataDb);
+        await using var connection = new SQLiteConnection(connectionString);
+        await connection.OpenAsync();
+        var transaction = connection.BeginTransaction();
+        const string sql =
+            "INSERT INTO POINTVALUE(PointId, Value, Status, UpdateTime) VALUES(@PointId, @Value, @Status, @UpdateTime)";
+        await connection.ExecuteAsync(sql, pointValues, transaction: transaction);
         transaction.Commit();
     }
 

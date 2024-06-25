@@ -1,14 +1,6 @@
 # 历史数据库S端和趋势分析重构方案-刘世全
 
-| 版本 | 更新 | 时间       |
-| ---- | ---- | ---------- |
-| 0.1  | 初建 | 2024-06-20 |
-|      |      |            |
-|      |      |            |
-
-
-
-## 1. 技术栈【0.1】
+## 1. 技术栈
 
 | 关注项       | 说明                                                         | 相关链接                                                     |
 | ------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -16,12 +8,12 @@
 | 程序模板     | Avalonia UI                                                  | https://avaloniaui.net/                                      |
 | 控件库       | [Semi.Avalonia](https://github.com/irihitech/Semi.Avalonia)、[Ursa.Avalonia](https://github.com/irihitech/Ursa.Avalonia) | MIT协议                                                      |
 | 图表库       | 自绘，调研 [ScottPlot](https://github.com/ScottPlot/ScottPlot) 和 [LiveCharts2](https://github.com/beto-rodriguez/LiveCharts2) ，不满足点一段时间没有数据、超限标识功能 |                                                              |
-| 操作系统支持 | 支持Win 7 SP1、Windows 8.1+                                  | https://docs.avaloniaui.net/docs/faq#what-versions-of-windows-are-supported |
+| 操作系统支持 | 支持Win 7 SP1、Windows 8.1+、Linux（统信UOS、银河麒麟等）、macOS | https://docs.avaloniaui.net/docs/faq#what-versions-of-windows-are-supported |
 | IDE          | VS2022\|Rider                                                |                                                              |
 
-## 2. 工时评估【0.1】
+## 2. 工时评估
 
-总工时：252h=31.5d=1.5月
+总工时：276h=34.5d
 
 | 模块\|功能        | 工时（h) | 备注                                                         |
 | ----------------- | -------- | ------------------------------------------------------------ |
@@ -32,15 +24,15 @@
 
 ## 3. 历史数据库S端
 
-### 情况【0.1】
+### 情况
 
-| 关键项   | 旧                                 | 新                                                 |
-| -------- | ---------------------------------- | -------------------------------------------------- |
-| 框架     | .NET 4.5.2 + Winform + Dev Express | .NET 8+、Avalonia UI、Semi.Avalonia、Ursa.Avalonia |
-| 操作系统 | Win 7+                             | Win 7 SP1、Win 8.1+、Linux、macOS                  |
-|          |                                    |                                                    |
+| 关键项   | 旧                                 | 新                                                           |
+| -------- | ---------------------------------- | ------------------------------------------------------------ |
+| 框架     | .NET 4.5.2 + Winform + Dev Express | .NET 8+、Avalonia UI、Semi.Avalonia、Ursa.Avalonia           |
+| 操作系统 | Win 7+                             | 支持Win 7 SP1、Windows 8.1+、Linux（统信UOS、银河麒麟等）、macOS |
+|          |                                    |                                                              |
 
-### 功能【0.1】
+### 功能
 
 总：68h
 
@@ -55,14 +47,14 @@
 
 ## 4. 趋势分析C端
 
-### 情况【0.1】
+### 情况
 
-| 关键项   | 旧                   | 新                                                 |
-| -------- | -------------------- | -------------------------------------------------- |
-| 框架     | Qt 5.12.10           | .NET 8+、Avalonia UI、Semi.Avalonia、Ursa.Avalonia |
-| 操作系统 | Win 7+、Linux、macOS | Win 7 SP1、Win 8.1+、Linux、macOS                  |
+| 关键项   | 旧                   | 新                                                           |
+| -------- | -------------------- | ------------------------------------------------------------ |
+| 框架     | Qt 5.12.10           | .NET 8+、Avalonia UI、Semi.Avalonia、Ursa.Avalonia           |
+| 操作系统 | Win 7+、Linux、macOS | 支持Win 7 SP1、Windows 8.1+、Linux（统信UOS、银河麒麟等）、macOS |
 
-### 功能【0.1】
+### 功能
 
 总工时：160h
 
@@ -98,16 +90,43 @@
 | Name   | varchar(50)        | 名称     |
 | Type   | 0:Integer,1:Double | 数据类型 |
 
-### 2. Data_[20240624].db
+### 2. Data_[XXXX].db
 
-点值数据库，根据数据量需要分库【Data_2024-06-21_1】
+#### 设计一：Data_[20240624].db
 
-每张表以点Id命名
+点值数据库，分库库名为Data_[当天日期],示例：【Data_20240624.db】
 
-| 字段名     | 数据类型 |                         |
-| ---------- | -------- | ----------------------- |
-| Id         | int      |                         |
-| PointId    | int      | 点Id，对应Point表Id字段 |
-| Value      | double   | 点值                    |
-| Status     | int      | 告警状态                |
-| UpdateTime | int      | 更新时间                |
+| 字段名     | 数据类型 |                                                   |
+| ---------- | -------- | ------------------------------------------------- |
+| Id         | int      |                                                   |
+| PointId    | int      | 点Id，对应Point表Id字段                           |
+| Value      | double   | 点值                                              |
+| Status     | TINYINT  | 告警状态                                          |
+| UpdateTime | int      | 采集时间，只存当天时间戳（0点到采集时间的毫秒数） |
+
+**空间占用分析**：20万数据，500ms推送间隔
+
+一条数据大小：4+4+8+1+4=21字节
+
+一天：21 * 200000 * 2 * 60 * 60 * 24=675G
+
+实际DB文件测试：10分钟3.58G，一天3.58 * 6 * 24 = 515.52G
+
+#### 设计二：Data_[20240624]_[325].db
+
+点值数据库，分库库名为`Data_【当天日期】_【点Id】`，示例：【Data_20240624_325.db】
+
+| 字段名     | 数据类型 |                                                   |
+| ---------- | -------- | ------------------------------------------------- |
+| Id         | int      |                                                   |
+| Value      | double   | 点值                                              |
+| Status     | TINYINT  | 告警状态                                          |
+| UpdateTime | int      | 采集时间，只存当天时间戳（0点到采集时间的毫秒数） |
+
+**空间占用分析**：20万数据，500ms推送间隔
+
+一条数据大小：4+8+1+4=17字节
+
+一天：17 * 200000 * 2 * 60 * 60 * 24=547G
+
+实际DB文件测试：

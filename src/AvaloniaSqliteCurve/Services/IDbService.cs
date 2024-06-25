@@ -10,5 +10,6 @@ namespace AvaloniaSqliteCurve.Services
         Task<IEnumerable<int>> GetPointIdsAsync();
         Task BulkInsertAsync(List<Point> points);
         Task BulkInsertAsync(List<PointValue> pointValues);
+        Task<List<Point>> GetPointsAsync(List<int> pointIds);
     }
 }

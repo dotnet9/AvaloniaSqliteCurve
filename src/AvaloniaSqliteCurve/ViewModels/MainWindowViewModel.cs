@@ -7,7 +7,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AvaloniaSqliteCurve.Commands;
 using AvaloniaSqliteCurve.Helpers;
+using CodeWF.EventBus;
 
 namespace AvaloniaSqliteCurve.ViewModels;
 
@@ -16,6 +18,8 @@ public class MainWindowViewModel : ViewModelBase
     private IFileChooserService? _fileChooserService;
     private INotificationService? _notificationService;
     private readonly IDbService _dbService = new DbService();
+    private List<int>? _allPointIds;
+    private readonly List<int> _plotPointIds = [];
     private CancellationTokenSource? _cancellationTokenSource;
     private Task? _longRunningTask;
     private string? _dataDir;
@@ -26,12 +30,20 @@ public class MainWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _dataDir, value);
     }
 
-    private int _pointCount = 5000;
+    private int _pointCount = 200000;
 
     public int PointCount
     {
         get => _pointCount;
         set => this.RaiseAndSetIfChanged(ref _pointCount, value);
+    }
+
+    private int _plotPointCount = 16;
+
+    public int PlotPointCount
+    {
+        get => _plotPointCount;
+        set => this.RaiseAndSetIfChanged(ref _plotPointCount, value);
     }
 
     private int _updateMilliseconds = 500;
@@ -40,6 +52,22 @@ public class MainWindowViewModel : ViewModelBase
     {
         get => _updateMilliseconds;
         set => this.RaiseAndSetIfChanged(ref _updateMilliseconds, value);
+    }
+
+    private bool _isShowRealtime = true;
+
+    public bool IsShowRealtime
+    {
+        get => _isShowRealtime;
+        set => this.RaiseAndSetIfChanged(ref _isShowRealtime, value);
+    }
+
+    private bool _isFourPlotCharts;
+
+    public bool IsFourPlotCharts
+    {
+        get => _isFourPlotCharts;
+        set => this.RaiseAndSetIfChanged(ref _isFourPlotCharts, value);
     }
 
     private bool _isRunning;
@@ -99,12 +127,12 @@ public class MainWindowViewModel : ViewModelBase
         {
             if (IsRunning)
             {
-                var pointIds = await CreateBasePointAsync();
-                if (pointIds?.Count > 0)
+                _allPointIds = await CreateBasePointAsync();
+                if (_allPointIds?.Count > 0)
                 {
                     _cancellationTokenSource = new CancellationTokenSource();
                     var token = _cancellationTokenSource.Token;
-                    _longRunningTask = Task.Run(() => UpdateData(pointIds, token), token);
+                    _longRunningTask = Task.Run(() => UpdateData(_allPointIds, token), token);
                 }
                 else
                 {
@@ -134,6 +162,44 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
+    public async Task ExecuteChangePlotChartKindHandler()
+    {
+        var kind = PlotChartsKind.History;
+        if (IsShowRealtime)
+        {
+            kind = IsFourPlotCharts ? PlotChartsKind.FourRealtime : PlotChartsKind.SingleRealtime;
+        }
+
+        await EventBus.Default.PublishAsync(new ChangePlotChartsKindCommand()
+            { Kind = kind });
+    }
+
+    public async Task ExecuteChangeRealtimePointHandler()
+    {
+        if (_allPointIds == null)
+        {
+            _allPointIds =(await _dbService.GetPointIdsAsync()).ToList();
+        }
+
+        if (_allPointIds == null || _allPointIds.Count == 0)
+        {
+            _notificationService!.Show(message: $"没有数据，请先点击生成");
+            return;
+        }
+        _plotPointIds.Clear();
+        var selectedIndexes = new HashSet<int>();
+        while (selectedIndexes.Count < PlotPointCount)
+        {
+            var index = Random.Shared.Next(_allPointIds!.Count);
+            if (selectedIndexes.Add(index))
+            {
+                _plotPointIds.Add(_allPointIds[index]);
+            }
+        }
+
+        var plotPoints = await _dbService.GetPointsAsync(_plotPointIds);
+    }
+
     private async Task<List<int>?> CreateBasePointAsync()
     {
         if (PointCount <= 0)
@@ -157,10 +223,13 @@ public class MainWindowViewModel : ViewModelBase
             new Point($"IPoint{index.ToString($"D{pointCountStrLen}")}", (int)PointType.Integer)).ToList();
         var doublePoints = Enumerable.Range(0, PointCount).Select(index =>
             new Point($"DPoint{index.ToString($"D{pointCountStrLen}")}", (int)PointType.Double)).ToList();
+
         await _dbService.BulkInsertAsync(intPoints);
         await _dbService.BulkInsertAsync(doublePoints);
+
         _notificationService!.Show(message: $"生成{PointCount * 2}个点数据！");
         pointIDs = (await _dbService.GetPointIdsAsync()).ToList();
+
         return pointIDs;
     }
 
@@ -175,8 +244,8 @@ public class MainWindowViewModel : ViewModelBase
                 var value = randomValues[id % randomValues.Count];
                 return new PointValue()
                 {
-                    PointId = id, Value = value, Status = Random.Shared.Next(0, 7),
-                    UpdateTime = DateTime.Now.ToUtcTimestamp()
+                    PointId = id, Value = value, Status = (byte)Random.Shared.Next(0, 7),
+                    UpdateTime = DateTime.Now.ToTodayUtcTimestamp()
                 };
             }).ToList();
             stopwatch.Stop();

@@ -3,12 +3,27 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:AvaloniaSqliteCurve.ViewModels"
-             xmlns:ScottPlot="clr-namespace:ScottPlot.Avalonia;assembly=ScottPlot.Avalonia"
+             xmlns:views="clr-namespace:AvaloniaSqliteCurve.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="AvaloniaSqliteCurve.Views.PointCharts"
-             x:DataType="vm:PointChartsViewModel">
+             x:DataType="vm:PointChartViewModel">
     <Design.DataContext>
-		<vm:PointChartsViewModel />
+        <vm:PointChartViewModel />
     </Design.DataContext>
-	<ScottPlot:AvaPlot  x:Name="PlotView"/>
+    <Grid>
+        <Grid x:Name="GridSingle">
+            <views:PointChart x:Name="ChartsSingle" />
+        </Grid>
+        <Grid RowDefinitions="*, 3, *" ColumnDefinitions="*, 3, *"
+              IsVisible="{Binding !IsVisible,ElementName=GridSingle}">
+            <views:PointChart x:Name="Charts1" Grid.Row="0" Grid.Column="0" />
+            <GridSplitter Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch" />
+            <views:PointChart x:Name="Charts2" Grid.Row="0" Grid.Column="2" />
+            <GridSplitter Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch" />
+            <views:PointChart x:Name="Charts3" Grid.Row="2" Grid.Column="0" />
+            <views:PointChart x:Name="Charts4" Grid.Row="2" Grid.Column="2" />
+        </Grid>
+    </Grid>
 </UserControl>

@@ -5,7 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Point = AvaloniaSqliteCurve.Entities.Point;
 
 namespace AvaloniaSqliteCurve.Services;
 
@@ -62,6 +65,30 @@ internal class DbService : IDbService
         transaction.Commit();
     }
 
+    public async Task<List<Point>> GetPointsAsync(List<int> pointIds)
+    {
+        var connectionString = await CreateDbAndGetConnectionStringAsync(DataTypeKind.BaseDb);
+        await using var connection = new SQLiteConnection(connectionString);
+        var sql = new StringBuilder("SELECT * POINT WHERE Id IN(");
+        for (var i = 0; i < pointIds.Count; i++)
+        {
+            sql.Append($"@p{i}");
+            if (i < pointIds.Count)
+            {
+                sql.Append(",");
+            }
+        }
+
+        DynamicParameters parameters = new DynamicParameters();
+        for (var i = 0; i < pointIds.Count; i++)
+        {
+            parameters.Add($"p{i}", pointIds[i]);
+        }
+
+        sql.Append(")");
+        return (await connection.QueryAsync<Point>(sql.ToString(), parameters)).ToList();
+    }
+
     async Task<string> CreateDbAndGetConnectionStringAsync(DataTypeKind kind = DataTypeKind.DataDb)
     {
         string connectionString;
@@ -90,7 +117,7 @@ internal class DbService : IDbService
                                           $"`Id` INTEGER," +
                                           $"`PointId` INTEGER," +
                                           $"`Value` DOUBLE," +
-                                          $"`Status` INTEGER," +
+                                          $"`Status` TINYINT," +
                                           $"`UpdateTime` INTEGER," +
                                           $"CONSTRAINT Point_PK PRIMARY KEY (Id)" +
                                           $")");

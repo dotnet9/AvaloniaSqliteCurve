@@ -1,0 +1,24 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:AvaloniaSqliteCurve.ViewModels"
+             xmlns:controls="clr-namespace:AvaloniaSqliteCurve.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="AvaloniaSqliteCurve.Views.PointChart"
+             x:DataType="vm:PointChartViewModel">
+    <Design.DataContext>
+        <vm:PointChartViewModel />
+    </Design.DataContext>
+    <Grid RowDefinitions="* 200">
+        <controls:Chart />
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Points, Mode=OneWay}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Name, Mode=OneWay}" Header="点名" Width="80" />
+                <DataGridTextColumn Binding="{Binding Value, Mode=OneWay}" Header="实时值" Width="100" />
+                <DataGridTextColumn Binding="{Binding UpdateTime,StringFormat=HH:mm:ss, Mode=OneWay}" Header="更新时间"
+                                    Width="120" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

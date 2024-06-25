@@ -25,7 +25,7 @@
             <Setter Property="Margin" Value="5 0" />
         </Style>
     </Window.Styles>
-    <Grid RowDefinitions="Auto, Auto, Auto, *">
+    <Grid RowDefinitions="Auto, Auto, Auto, Auto, *">
         <Grid ColumnDefinitions="Auto, 700, Auto, Auto, Auto, *">
             <TextBlock Text="数据目录：" />
             <TextBox Grid.Column="1" Text="{Binding DataDir}" />
@@ -41,9 +41,27 @@
         </Grid>
         <Grid Grid.Row="2" ColumnDefinitions="Auto, 70, Auto, 70, Auto, *">
             <TextBlock Text="曲线点数：" />
-            <TextBox Grid.Column="1" Text="16" />
-            <ToggleSwitch Grid.Column="2" OnContent="实时数据" OffContent="历史数据"></ToggleSwitch>
+            <TextBox Grid.Column="1" Text="{Binding PlotPointCount}" />
+            <ToggleSwitch Grid.Column="2"
+                          IsChecked="{Binding IsShowRealtime}"
+                          Command="{Binding ExecuteChangePlotChartKindHandler}"
+                          OnContent="实时数据" OffContent="历史数据"
+                          x:Name="ShowRealtimeData">
+            </ToggleSwitch>
         </Grid>
-        <views:PointCharts Grid.Row="3"/>
+        <StackPanel x:Name="RealtimePanel" Orientation="Horizontal" Grid.Row="3"
+                    IsVisible="{Binding IsChecked,ElementName=ShowRealtimeData}">
+            <Button Content="切换一批数据" Command="{Binding ExecuteChangeRealtimePointHandler}" />
+            <ToggleButton Content="四分窗口" IsChecked="{Binding IsFourPlotCharts}"
+                          Command="{Binding ExecuteChangePlotChartKindHandler}" />
+        </StackPanel>
+        <StackPanel x:Name="HistoryPanel" Orientation="Horizontal" Grid.Row="3"
+                    IsVisible="{Binding !IsChecked,ElementName=ShowRealtimeData}">
+            <TextBlock Text="开始时间："></TextBlock>
+            <TextBlock Text="结束时间："></TextBlock>
+            <TextBlock Text="时间间隔："></TextBlock>
+            <Button Content="切换一批数据" />
+        </StackPanel>
+        <views:PointCharts Grid.Row="4" />
     </Grid>
 </Window>

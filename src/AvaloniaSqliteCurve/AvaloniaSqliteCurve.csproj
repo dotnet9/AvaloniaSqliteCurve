@@ -11,7 +11,6 @@
   <ItemGroup>
     <Folder Include="Dto\" />
     <AvaloniaResource Include="Assets\**" />
-    <Folder Include="Commands\" />
   </ItemGroup>
 
 
@@ -22,9 +21,10 @@
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.1.0-rc1" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="11.1.0-rc1" />
+    <PackageReference Include="CodeWF.EventBus" Version="3.4.4" />
     <PackageReference Include="Dapper" Version="2.1.35" />
-    <PackageReference Include="ScottPlot.Avalonia" Version="5.0.35" />
     <PackageReference Include="Semi.Avalonia" Version="11.1.0-rc1" />
+    <PackageReference Include="Semi.Avalonia.DataGrid" Version="11.1.0-rc1" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.118" />
   </ItemGroup>
 </Project>

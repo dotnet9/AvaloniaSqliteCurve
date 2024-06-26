@@ -1,7 +1,8 @@
-using System.Collections.Generic;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using System.Collections.Generic;
 using AvaloniaSqliteCurve.Entities;
+using AvaloniaSqliteCurve.ViewModels;
 
 namespace AvaloniaSqliteCurve.Views;
 
@@ -10,6 +11,7 @@ public partial class PointChart : UserControl
     public PointChart()
     {
         InitializeComponent();
+        this.DataContext = new PointChartViewModel();
     }
 
     private void InitializeComponent()
@@ -17,8 +19,8 @@ public partial class PointChart : UserControl
         AvaloniaXamlLoader.Load(this);
     }
 
-    private void Update(List<Point> points)
+    public void Update(Dictionary<string, List<PointValue>> points)
     {
-
+        (this.DataContext as PointChartViewModel)?.Update(points);
     }
 }

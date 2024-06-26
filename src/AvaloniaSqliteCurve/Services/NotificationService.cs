@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Notifications;
 using System;
+using Avalonia.Threading;
 
 namespace AvaloniaSqliteCurve.Services;
 
@@ -38,13 +39,16 @@ public class NotificationService : INotificationService
     {
         if (_notificationManager is { } nm)
         {
-            nm.Show(
-                new Notification(
-                    title,
-                    message,
-                    NotificationType.Information,
-                    TimeSpan.FromSeconds(_notificationTimeout),
-                    onClick));
+            Dispatcher.UIThread.Invoke(() =>
+            {
+                nm.Show(
+                    new Notification(
+                        title,
+                        message,
+                        NotificationType.Information,
+                        TimeSpan.FromSeconds(_notificationTimeout),
+                        onClick));
+            });
         }
     }
 }

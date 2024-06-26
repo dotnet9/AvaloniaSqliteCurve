@@ -16,7 +16,7 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Name, Mode=OneWay}" Header="点名" Width="80" />
                 <DataGridTextColumn Binding="{Binding Value, Mode=OneWay}" Header="实时值" Width="100" />
-                <DataGridTextColumn Binding="{Binding UpdateTime,StringFormat=HH:mm:ss, Mode=OneWay}" Header="更新时间"
+                <DataGridTextColumn Binding="{Binding UpdateTime, Mode=OneWay}" Header="更新时间"
                                     Width="120" />
             </DataGrid.Columns>
         </DataGrid>

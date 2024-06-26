@@ -10,7 +10,7 @@ namespace AvaloniaSqliteCurve.Helpers
             var ts = dateTime - time;
             return (long)ts.TotalMilliseconds;
         }
-        public static int ToTodayUtcTimestamp(this DateTime dateTime)
+        public static int ToTodayTimestamp(this DateTime dateTime)
         {
             var time = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day);
             var ts = dateTime - time;

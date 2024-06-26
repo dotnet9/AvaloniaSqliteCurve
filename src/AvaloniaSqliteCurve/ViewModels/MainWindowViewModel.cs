@@ -18,8 +18,8 @@ public class MainWindowViewModel : ViewModelBase
     private IFileChooserService? _fileChooserService;
     private INotificationService? _notificationService;
     private readonly IDbService _dbService = new DbService();
-    private List<int>? _allPointIds;
-    private readonly List<int> _plotPointIds = [];
+    private const string PointNamePrefix = "Point";
+    private readonly List<string> _plotPointNames = [];
     private CancellationTokenSource? _cancellationTokenSource;
     private Task? _longRunningTask;
     private string? _dataDir;
@@ -86,11 +86,45 @@ public class MainWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _runningContent, value);
     }
 
+    private string _startDate;
+
+    public string StartDate
+    {
+        get => _startDate;
+        set => this.RaiseAndSetIfChanged(ref _startDate, value);
+    }
+
+    private string _endDate;
+
+    public string EndDate
+    {
+        get => _endDate;
+        set => this.RaiseAndSetIfChanged(ref _endDate, value);
+    }
+
+    private string? _displayChartPoints;
+
+    public string? DisplayChartPoints
+    {
+        get => _displayChartPoints;
+        set => this.RaiseAndSetIfChanged(ref _displayChartPoints, value);
+    }
+
+    private string? _displayMsg;
+
+    public string? DisplayMsg
+    {
+        get => _displayMsg;
+        set => this.RaiseAndSetIfChanged(ref _displayMsg, value);
+    }
+
     public MainWindowViewModel()
     {
         this.WhenAnyValue(x => x.IsRunning).Subscribe(newValue => { RunningContent = newValue ? "停止生成数据" : "开始生成数据"; });
         this.WhenAnyValue(x => x.DataDir).Subscribe(_dbService.ChangeDataFolder);
         DataDir = System.IO.Path.Combine($"{AppDomain.CurrentDomain.BaseDirectory}", "Data");
+        StartDate = DateTime.Now.AddMinutes(-1).ToString("yyyy-MM-dd HH:mm:ss");
+        EndDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
     }
 
     public void SetTool(IFileChooserService fileChooserService, INotificationService notificationService)
@@ -127,17 +161,9 @@ public class MainWindowViewModel : ViewModelBase
         {
             if (IsRunning)
             {
-                _allPointIds = await CreateBasePointAsync();
-                if (_allPointIds?.Count > 0)
-                {
-                    _cancellationTokenSource = new CancellationTokenSource();
-                    var token = _cancellationTokenSource.Token;
-                    _longRunningTask = Task.Run(() => UpdateData(_allPointIds, token), token);
-                }
-                else
-                {
-                    IsRunning = false;
-                }
+                _cancellationTokenSource = new CancellationTokenSource();
+                var token = _cancellationTokenSource.Token;
+                _longRunningTask = Task.Run(() => UpdateData(token), token);
 
                 return;
             }
@@ -174,89 +200,101 @@ public class MainWindowViewModel : ViewModelBase
             { Kind = kind });
     }
 
-    public async Task ExecuteChangeRealtimePointHandler()
+    public async Task ExecuteChangePlotChartPointHandler()
     {
-        if (_allPointIds == null)
-        {
-            _allPointIds =(await _dbService.GetPointIdsAsync()).ToList();
-        }
-
-        if (_allPointIds == null || _allPointIds.Count == 0)
-        {
-            _notificationService!.Show(message: $"没有数据，请先点击生成");
-            return;
-        }
-        _plotPointIds.Clear();
+        _plotPointNames.Clear();
         var selectedIndexes = new HashSet<int>();
         while (selectedIndexes.Count < PlotPointCount)
         {
-            var index = Random.Shared.Next(_allPointIds!.Count);
+            var index = Random.Shared.Next(PointCount);
             if (selectedIndexes.Add(index))
             {
-                _plotPointIds.Add(_allPointIds[index]);
+                _plotPointNames.Add($"{PointNamePrefix}{index}");
             }
         }
 
-        var plotPoints = await _dbService.GetPointsAsync(_plotPointIds);
+        DisplayChartPoints = string.Join(",", _plotPointNames);
     }
 
-    private async Task<List<int>?> CreateBasePointAsync()
+    public async Task ExecuteSearchPointsHandler()
     {
-        if (PointCount <= 0)
+        if (_plotPointNames?.Count > 0 == false)
         {
-            _notificationService!.Show(message: $"请输入生成点数量！");
-            return null;
+            _notificationService?.Show("请切换查询点！");
+            return;
         }
 
-        var pointIDs = (await _dbService.GetPointIdsAsync()).ToList();
-        if (pointIDs.Count > 0)
+
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
+        try
         {
-            var pointCount = pointIDs.Count;
-            _notificationService!.Show(message: pointCount != (PointCount * 2)
-                ? $"已经生成了{pointCount}个点数据，如需重新生成，请手动删除DB再生成！"
-                : $"已经生成了{pointCount}个点数据！");
-            return pointIDs;
-        }
-
-        var pointCountStrLen = $"{PointCount}".Length;
-        var intPoints = Enumerable.Range(0, PointCount).Select(index =>
-            new Point($"IPoint{index.ToString($"D{pointCountStrLen}")}", (int)PointType.Integer)).ToList();
-        var doublePoints = Enumerable.Range(0, PointCount).Select(index =>
-            new Point($"DPoint{index.ToString($"D{pointCountStrLen}")}", (int)PointType.Double)).ToList();
-
-        await _dbService.BulkInsertAsync(intPoints);
-        await _dbService.BulkInsertAsync(doublePoints);
-
-        _notificationService!.Show(message: $"生成{PointCount * 2}个点数据！");
-        pointIDs = (await _dbService.GetPointIdsAsync()).ToList();
-
-        return pointIDs;
-    }
-
-    private async Task UpdateData(List<int> pointIds, CancellationToken cancellationToken)
-    {
-        while (!cancellationToken.IsCancellationRequested)
-        {
-            var stopwatch = Stopwatch.StartNew();
-            var randomValues = Enumerable.Range(0, 5).Select(index => Random.Shared.Next(0, 100)).ToList();
-            var pointValues = pointIds.Select(id =>
+            var startTime = DateTime.Parse(StartDate);
+            var endTime = DateTime.Parse(EndDate);
+            if (startTime >= endTime)
             {
-                var value = randomValues[id % randomValues.Count];
-                return new PointValue()
-                {
-                    PointId = id, Value = value, Status = (byte)Random.Shared.Next(0, 7),
-                    UpdateTime = DateTime.Now.ToTodayUtcTimestamp()
-                };
-            }).ToList();
-            stopwatch.Stop();
-            Console.WriteLine($"生成数据耗时：{stopwatch.ElapsedMilliseconds}ms");
+                _notificationService?.Show("请正确设置查询起止时间！");
+                return;
+            }
 
-            stopwatch.Restart();
-            await _dbService.BulkInsertAsync(pointValues);
+            var pointValues = await _dbService.GetPointValues(_plotPointNames, startTime, endTime);
+            var queryPointValueCount = pointValues?.Values.Sum(list => list?.Count);
             stopwatch.Stop();
-            Console.WriteLine($"插入数据耗时：{stopwatch.ElapsedMilliseconds}ms");
-
-            await Task.Delay(TimeSpan.FromMilliseconds(UpdateMilliseconds), cancellationToken);
+            await EventBus.Default.PublishAsync(new ChangePlotChartsDataCommand { PointValues = pointValues });
+            DisplayMsg = $"查询结果：{queryPointValueCount}条，耗时{stopwatch.ElapsedMilliseconds}ms";
         }
+        catch (Exception ex)
+        {
+            stopwatch.Stop();
+            DisplayMsg = $"查询结果：耗时{stopwatch.ElapsedMilliseconds}ms，出错信息【{ex.Message}】";
+        }
+    }
+
+    private async Task UpdateData(CancellationToken cancellationToken)
+    {
+        try
+        {
+            var randomValues = Enumerable.Range(0, 5).Select(index => Random.Shared.Next(0, 100)).ToList();
+            const int bulkInsertCount = 5000;
+            var onePointWriteCountInOneDay = (60 * 1000 / UpdateMilliseconds) * 60 * 24;
+
+
+            for (var j = 0; j < onePointWriteCountInOneDay; j++)
+            {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    break;
+                }
+
+                var insertCount = (j + bulkInsertCount <= onePointWriteCountInOneDay)
+                    ? bulkInsertCount
+                    : (onePointWriteCountInOneDay - j);
+
+                var dataList = Enumerable.Range(j, insertCount).Select(index => new PointValue()
+                {
+                    Value = randomValues[index % randomValues.Count],
+                    Status = (byte)Random.Shared.Next(0, 7),
+                    UpdateTime = DateTime.Now.ToTodayTimestamp()
+                }).ToList();
+                await Task.WhenAll(Enumerable.Range(0, PointCount)
+                    .Select(i => InsetData(i, dataList, cancellationToken)));
+
+                j += insertCount;
+            }
+        }
+        catch (Exception ex)
+        {
+            _notificationService!.Show(message: $"更新失败：{ex.Message}");
+        }
+    }
+
+    private async Task InsetData(int pointIndex, List<PointValue> dataList, CancellationToken cancellationToken)
+    {
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return;
+        }
+
+        await _dbService.BulkInsertAsync($"{PointNamePrefix}{pointIndex}", dataList);
     }
 }

@@ -1,22 +1,19 @@
-﻿using Avalonia;
-using AvaloniaSqliteCurve.Entities;
+﻿using AvaloniaSqliteCurve.Entities;
+using AvaloniaSqliteCurve.Helpers;
 using Dapper;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Point = AvaloniaSqliteCurve.Entities.Point;
 
 namespace AvaloniaSqliteCurve.Services;
 
 internal class DbService : IDbService
 {
     private const string DefaultDbFolderName = "data";
-    private const string DefaultBaseDbName = "BaseInfo.db";
-    private const string DefaultDataDbPrefixName = "Data_";
     private static string _folder;
 
     static DbService()
@@ -33,102 +30,138 @@ internal class DbService : IDbService
         Directory.CreateDirectory(_folder);
     }
 
-    public async Task<IEnumerable<int>> GetPointIdsAsync()
-    {
-        var connectionString = await CreateDbAndGetConnectionStringAsync(DataTypeKind.BaseDb);
-        await using var connection = new SQLiteConnection(connectionString);
-        const string sql = "SELECT Id FROM POINT";
-        return await connection.QueryAsync<int>(sql);
-    }
 
-
-    public async Task BulkInsertAsync(List<Entities.Point> points)
+    public async Task<int> BulkInsertAsync(string pointName, List<PointValue> pointValues)
     {
-        var connectionString = await CreateDbAndGetConnectionStringAsync(DataTypeKind.BaseDb);
+        var connectionString = await CreateDbAndGetConnectionStringAsync(pointName);
         await using var connection = new SQLiteConnection(connectionString);
         await connection.OpenAsync();
         var transaction = connection.BeginTransaction();
-        const string sql = "INSERT INTO POINT(Name, Type) VALUES(@Name, @Type)";
-        await connection.ExecuteAsync(sql, points, transaction: transaction);
+        var sql =
+            $"INSERT INTO PointValue(Value, Status, UpdateTime) VALUES(@Value, @Status, @UpdateTime)";
+        var insertCount = await connection.ExecuteAsync(sql, pointValues, transaction: transaction);
         transaction.Commit();
+        return insertCount;
     }
 
-    public async Task BulkInsertAsync(List<PointValue> pointValues)
+    public async Task<Dictionary<string, List<PointValue>?>> GetPointValues(List<string> names, DateTime startDateTime,
+        DateTime endDateTime)
     {
-        var connectionString = await CreateDbAndGetConnectionStringAsync(DataTypeKind.DataDb);
-        await using var connection = new SQLiteConnection(connectionString);
-        await connection.OpenAsync();
-        var transaction = connection.BeginTransaction();
-        const string sql =
-            "INSERT INTO POINTVALUE(PointId, Value, Status, UpdateTime) VALUES(@PointId, @Value, @Status, @UpdateTime)";
-        await connection.ExecuteAsync(sql, pointValues, transaction: transaction);
-        transaction.Commit();
-    }
-
-    public async Task<List<Point>> GetPointsAsync(List<int> pointIds)
-    {
-        var connectionString = await CreateDbAndGetConnectionStringAsync(DataTypeKind.BaseDb);
-        await using var connection = new SQLiteConnection(connectionString);
-        var sql = new StringBuilder("SELECT * POINT WHERE Id IN(");
-        for (var i = 0; i < pointIds.Count; i++)
+        var allNameAndValues = new Dictionary<string, List<PointValue>?>();
+        var tasks = Enumerable.Range(0, (endDateTime - startDateTime).Days + 1).Select(day =>
         {
-            sql.Append($"@p{i}");
-            if (i < pointIds.Count)
+            var currentDate = startDateTime.AddDays(day);
+            var earlyStart = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day);
+            var latestEnd = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day, 23, 59, 59, 999);
+            var currentDateStart = earlyStart > startDateTime ? earlyStart : startDateTime;
+            var currentDateEnd = endDateTime < latestEnd ? endDateTime : latestEnd;
+            var startTime = currentDateStart.ToTodayTimestamp();
+            var endTime = currentDateEnd.ToTodayTimestamp();
+            return OpenDbAndQueryAsync(currentDate, names, startTime, endTime);
+        }).ToList();
+
+        try
+        {
+            await Task.WhenAll(tasks);
+
+            foreach (var task in tasks)
             {
-                sql.Append(",");
+                foreach (var kvp in task.Result)
+                {
+                    var pointName = kvp.Key;
+                    if (!allNameAndValues.ContainsKey(pointName))
+                        allNameAndValues[pointName] = [];
+                    if (kvp.Value?.Count > 0)
+                    {
+                        allNameAndValues[pointName]!.AddRange(kvp.Value);
+                    }
+                }
             }
-        }
 
-        DynamicParameters parameters = new DynamicParameters();
-        for (var i = 0; i < pointIds.Count; i++)
+            return allNameAndValues;
+        }
+        catch (FileNotFoundException ex)
         {
-            parameters.Add($"p{i}", pointIds[i]);
+            return allNameAndValues;
         }
-
-        sql.Append(")");
-        return (await connection.QueryAsync<Point>(sql.ToString(), parameters)).ToList();
     }
 
-    async Task<string> CreateDbAndGetConnectionStringAsync(DataTypeKind kind = DataTypeKind.DataDb)
+    private async Task<Dictionary<string, List<PointValue>?>> OpenDbAndQueryAsync(DateTime dbCreateDate,
+        List<string> names,
+        int startTimestamp, int endTimestamp)
     {
-        string connectionString;
-        if (kind == DataTypeKind.BaseDb)
-        {
-            var dbPath = Path.Combine(_folder, DefaultBaseDbName);
-            connectionString = $"data source={dbPath}";
-            if (File.Exists(dbPath)) return connectionString;
+        var nameAndValues = new Dictionary<string, List<PointValue>?>();
 
-            await using var connection = new SQLiteConnection(connectionString);
-            await connection.ExecuteAsync($"CREATE TABLE Point(" +
-                                          $"`Id` INTEGER," +
-                                          $"`Name` VARCHAR(50)," +
-                                          $"`Type` INTEGER," +
-                                          $"CONSTRAINT Point_PK PRIMARY KEY (Id)" +
-                                          $")");
-        }
-        else
+        try
         {
-            var dbPath = Path.Combine(_folder, $"{DefaultDataDbPrefixName}{DateTime.Now:yyyyMMdd}.db");
-            connectionString = $"data source={dbPath}";
-            if (File.Exists(dbPath)) return connectionString;
+            foreach (var name in names)
+            {
+                try
+                {
+                    GetDbPathAndConnectionString(dbCreateDate, name, out var connectionString);
+                    if (!await IsTableExistsAsync(connectionString, name))
+                    {
+                        nameAndValues[name] = null;
+                        continue;
+                    }
 
-            await using var connection = new SQLiteConnection(connectionString);
-            await connection.ExecuteAsync($"CREATE TABLE PointValue(" +
-                                          $"`Id` INTEGER," +
-                                          $"`PointId` INTEGER," +
-                                          $"`Value` DOUBLE," +
-                                          $"`Status` TINYINT," +
-                                          $"`UpdateTime` INTEGER," +
-                                          $"CONSTRAINT Point_PK PRIMARY KEY (Id)" +
-                                          $")");
+                    await using var connection = new SQLiteConnection(connectionString);
+                    var query =
+                        $@"SELECT Id, Value, Status, UpdateTime FROM PointValue WHERE UpdateTime BETWEEN {startTimestamp} AND {endTimestamp}";
+                    var dataValues = await connection.QueryAsync<PointValue>(query);
+                    nameAndValues[name] = dataValues.ToList();
+                }
+                catch
+                {
+                    nameAndValues[name] = null;
+                }
+            }
+
+            return nameAndValues;
         }
+        catch (Exception ex)
+        {
+            return null;
+        }
+    }
+
+
+    async Task<string> CreateDbAndGetConnectionStringAsync(string pointName)
+    {
+        GetDbPathAndConnectionString(DateTime.Now, pointName, out var connectionString);
+
+        await using var connection = new SQLiteConnection(connectionString);
+        await connection.ExecuteAsync($"CREATE TABLE IF NOT EXISTS PointValue(" +
+                                      $"`Id` INTEGER," +
+                                      $"`Value` DOUBLE," +
+                                      $"`Status` TINYINT," +
+                                      $"`UpdateTime` INTEGER," +
+                                      $"CONSTRAINT Point_PK PRIMARY KEY (Id)" +
+                                      $")");
+
+        await connection.ExecuteAsync($"CREATE INDEX IF NOT EXISTS idx_UpdateTime ON PointValue (UpdateTime)");
 
         return connectionString;
     }
-}
 
-public enum DataTypeKind
-{
-    BaseDb,
-    DataDb
+    async Task<bool> IsTableExistsAsync(string connectionString, string tableName)
+    {
+        await using var connection = new SQLiteConnection(connectionString);
+        string sqlQuery = $"SELECT name FROM sqlite_master WHERE type='table' AND name=@tableName";
+        return await connection.ExecuteAsync(sqlQuery, new { tableName }) > 0;
+    }
+
+    bool GetDbPathAndConnectionString(DateTime date, string pointName, out string connectionString)
+    {
+        var dbDir = Path.Combine(_folder, $"{date:yyyy-MM-dd}");
+        if (!Directory.Exists(dbDir))
+        {
+            Directory.CreateDirectory(dbDir);
+        }
+
+
+        var dbPath = Path.Combine(dbDir, pointName);
+        connectionString = $"Data Source=\"{dbPath}\";Version=3;New=False;Compress=True;";
+        return System.IO.File.Exists(dbPath);
+    }
 }

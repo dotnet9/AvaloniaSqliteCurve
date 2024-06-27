@@ -99,7 +99,7 @@ internal class DbService : IDbService
                 try
                 {
                     GetDbPathAndConnectionString(dbCreateDate, name, out var connectionString);
-                    if (!await IsTableExistsAsync(connectionString, name))
+                    if (!await IsTableExistsAsync(connectionString, "PointValue"))
                     {
                         nameAndValues[name] = null;
                         continue;
@@ -147,8 +147,9 @@ internal class DbService : IDbService
     async Task<bool> IsTableExistsAsync(string connectionString, string tableName)
     {
         await using var connection = new SQLiteConnection(connectionString);
-        string sqlQuery = $"SELECT name FROM sqlite_master WHERE type='table' AND name=@tableName";
-        return await connection.ExecuteAsync(sqlQuery, new { tableName }) > 0;
+        const string sqlQuery = $"SELECT count(1) FROM sqlite_master WHERE type='table' AND name=@tableName";
+        var result = await connection.QuerySingleAsync<int>(sqlQuery, new { tableName });
+        return result > 0;
     }
 
     bool GetDbPathAndConnectionString(DateTime date, string pointName, out string connectionString)

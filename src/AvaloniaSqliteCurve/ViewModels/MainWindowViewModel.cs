@@ -118,6 +118,8 @@ public class MainWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _displayMsg, value);
     }
 
+    private static readonly char[] separator = new char[] { ',', '，' };
+
     public MainWindowViewModel()
     {
         this.WhenAnyValue(x => x.IsRunning).Subscribe(newValue => { RunningContent = newValue ? "停止生成数据" : "开始生成数据"; });
@@ -218,6 +220,13 @@ public class MainWindowViewModel : ViewModelBase
 
     public async Task ExecuteSearchPointsHandler()
     {
+        if (_plotPointNames?.Count > 0 == false)
+        {
+            if (!string.IsNullOrWhiteSpace(DisplayChartPoints))
+            {
+                _plotPointNames.AddRange(DisplayChartPoints.Split(separator));
+            }
+        }
         if (_plotPointNames?.Count > 0 == false)
         {
             _notificationService?.Show("请切换查询点！");

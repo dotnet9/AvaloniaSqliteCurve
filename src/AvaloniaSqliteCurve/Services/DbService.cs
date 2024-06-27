@@ -107,7 +107,7 @@ internal class DbService : IDbService
 
                     await using var connection = new SQLiteConnection(connectionString);
                     var query =
-                        $@"SELECT Id, Value, Status, UpdateTime FROM PointValue WHERE UpdateTime BETWEEN {startTimestamp} AND {endTimestamp}";
+                        $@"SELECT Value, Status, UpdateTime FROM PointValue WHERE UpdateTime BETWEEN {startTimestamp} AND {endTimestamp}";
                     var dataValues = await connection.QueryAsync<PointValue>(query);
                     nameAndValues[name] = dataValues.ToList();
                 }
@@ -132,14 +132,14 @@ internal class DbService : IDbService
 
         await using var connection = new SQLiteConnection(connectionString);
         await connection.ExecuteAsync($"CREATE TABLE IF NOT EXISTS PointValue(" +
-                                      $"`Id` INTEGER," +
+                                      //$"`Id` INTEGER," +
                                       $"`Value` DOUBLE," +
                                       $"`Status` TINYINT," +
-                                      $"`UpdateTime` INTEGER," +
-                                      $"CONSTRAINT Point_PK PRIMARY KEY (Id)" +
+                                      $"`UpdateTime` INTEGER" +
+                                      //$"CONSTRAINT Point_PK PRIMARY KEY (Id)" +
                                       $")");
 
-        await connection.ExecuteAsync($"CREATE INDEX IF NOT EXISTS idx_UpdateTime ON PointValue (UpdateTime)");
+        //await connection.ExecuteAsync($"CREATE INDEX IF NOT EXISTS idx_UpdateTime ON PointValue (UpdateTime)");
 
         return connectionString;
     }

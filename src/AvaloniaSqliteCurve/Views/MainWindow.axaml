@@ -26,11 +26,12 @@
         </Style>
     </Window.Styles>
     <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, *">
-        <Grid ColumnDefinitions="Auto, 700, Auto, Auto, Auto, *">
+        <Grid ColumnDefinitions="Auto, 700, Auto, Auto, Auto, Auto, *">
             <TextBlock Text="数据目录：" />
             <TextBox Grid.Column="1" Text="{Binding DataDir}" />
             <Button Content="修改" Grid.Column="2" Command="{Binding ExecuteChoiceFolderHandle}" />
             <Button Content="打开" Grid.Column="3" Command="{Binding ExecuteOpenFolderHandle}" />
+            <Button Content="ScottPlot" Grid.Column="4" Command="{Binding ExecuteOpenScottPlotHandle}" />
         </Grid>
         <Grid Grid.Row="1" Margin="0 15" ColumnDefinitions="Auto, 70, Auto, 70, Auto, *">
             <TextBlock Text="模拟点数：" />

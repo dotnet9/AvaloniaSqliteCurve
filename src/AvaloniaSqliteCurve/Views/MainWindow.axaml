@@ -31,7 +31,9 @@
             <TextBox Grid.Column="1" Text="{Binding DataDir}" />
             <StackPanel Orientation="Horizontal" Grid.Column="2">
                 <Button Content="修改" Command="{Binding ExecuteChoiceFolderHandle}" />
-                <Button Content="打开" Command="{Binding ExecuteOpenFolderHandle}" />
+				<Button Content="打开" Command="{Binding ExecuteOpenFolderHandle}" />
+                <Button Content="LiveCharts2" Command="{Binding ExecuteShowLiveCharts2DemoHandle}" />
+                <Button Content="ScottPlot" Command="{Binding ExecuteShowScottPlotDemoHandle}" />
             </StackPanel>
         </Grid>
         <Grid Grid.Row="1" Margin="0 15" ColumnDefinitions="Auto, 70, Auto, 70, Auto, *">
@@ -73,6 +75,5 @@
             </TextBlock>
             <TextBox Text="{Binding DisplayChartPoints}" TextWrapping="Wrap" MaxWidth="800" Height="100" />
         </StackPanel>
-        <views:PointCharts Grid.Row="5" />
     </Grid>
 </Window>

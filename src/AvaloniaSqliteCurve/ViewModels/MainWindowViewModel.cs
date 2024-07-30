@@ -156,6 +156,16 @@ public class MainWindowViewModel : ViewModelBase
         await _fileChooserService!.OpenFolderAsync(DataDir);
     }
 
+    public void ExecuteShowLiveCharts2DemoHandle()
+    {
+        new LiveCharts2Demo().Show();
+    }
+
+    public void ExecuteShowScottPlotDemoHandle()
+    {
+        new ScottPlotDemo().Show();
+    }
+
     public async Task ExecuteRunningHandle()
     {
         IsRunning = !IsRunning;

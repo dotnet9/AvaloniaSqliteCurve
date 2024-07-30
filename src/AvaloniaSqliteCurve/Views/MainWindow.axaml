@@ -26,12 +26,13 @@
         </Style>
     </Window.Styles>
     <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, *">
-        <Grid ColumnDefinitions="Auto, 700, Auto, Auto, Auto, Auto, *">
+        <Grid ColumnDefinitions="Auto, 700, Auto, *">
             <TextBlock Text="数据目录：" />
             <TextBox Grid.Column="1" Text="{Binding DataDir}" />
-            <Button Content="修改" Grid.Column="2" Command="{Binding ExecuteChoiceFolderHandle}" />
-            <Button Content="打开" Grid.Column="3" Command="{Binding ExecuteOpenFolderHandle}" />
-            <Button Content="ScottPlot" Grid.Column="4" Command="{Binding ExecuteOpenScottPlotHandle}" />
+            <StackPanel Orientation="Horizontal" Grid.Column="2">
+                <Button Content="修改" Command="{Binding ExecuteChoiceFolderHandle}" />
+                <Button Content="打开" Command="{Binding ExecuteOpenFolderHandle}" />
+            </StackPanel>
         </Grid>
         <Grid Grid.Row="1" Margin="0 15" ColumnDefinitions="Auto, 70, Auto, 70, Auto, *">
             <TextBlock Text="模拟点数：" />
@@ -70,7 +71,7 @@
             <TextBlock>
                 <Run Text="查询点：" />
             </TextBlock>
-            <TextBox Text="{Binding DisplayChartPoints}" TextWrapping="Wrap" MaxWidth="800" Height="100"/>
+            <TextBox Text="{Binding DisplayChartPoints}" TextWrapping="Wrap" MaxWidth="800" Height="100" />
         </StackPanel>
         <views:PointCharts Grid.Row="5" />
     </Grid>

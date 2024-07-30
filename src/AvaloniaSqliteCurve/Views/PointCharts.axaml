@@ -10,7 +10,7 @@
         <Grid x:Name="GridSingle">
             <views:PointChart x:Name="ChartsSingle" />
         </Grid>
-        <Grid RowDefinitions="*, 3, *" ColumnDefinitions="*, 3, *"
+		<!--Grid RowDefinitions="*, 3, *" ColumnDefinitions="*, 3, *"
               IsVisible="{Binding !IsVisible,ElementName=GridSingle}">
             <views:PointChart x:Name="Charts1" Grid.Row="0" Grid.Column="0" />
             <GridSplitter Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" HorizontalAlignment="Stretch"
@@ -20,6 +20,6 @@
                           VerticalAlignment="Stretch" />
             <views:PointChart x:Name="Charts3" Grid.Row="2" Grid.Column="0" />
             <views:PointChart x:Name="Charts4" Grid.Row="2" Grid.Column="2" />
-        </Grid>
+        </-->
     </Grid>
 </UserControl>

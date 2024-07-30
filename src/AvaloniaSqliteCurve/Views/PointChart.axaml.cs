@@ -21,6 +21,6 @@ public partial class PointChart : UserControl
 
     public void Update(Dictionary<string, List<PointValue>> points)
     {
-        (this.DataContext as PointChartViewModel)?.Update(points);
+        //(this.DataContext as PointChartViewModel)?.Update(points);
     }
 }

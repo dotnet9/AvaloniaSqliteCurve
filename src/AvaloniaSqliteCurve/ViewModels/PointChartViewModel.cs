@@ -1,29 +1,102 @@
-﻿using System.Collections.Generic;
-using AvaloniaSqliteCurve.Entities;
+﻿using LiveChartsCore;
+using LiveChartsCore.Defaults;
+using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore.SkiaSharpView.Painting;
+using SkiaSharp;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using AvaloniaSqliteCurve.Models;
+using System.Threading.Tasks;
 
 namespace AvaloniaSqliteCurve.ViewModels
 {
     internal class PointChartViewModel : ViewModelBase
     {
-        public ObservableCollection<PointModel> Points { get; } = new();
+        private readonly List<ObservableCollection<DateTimePoint?>> _values = new();
+        private readonly DateTimeAxis _customAxis;
 
-        public void Update(Dictionary<string, List<PointValue>> dataLst)
+        public PointChartViewModel()
         {
-            foreach (var (pointName, value) in dataLst)
+            var lineCount = Random.Shared.Next(5, 16);
+            Series = [];
+            for (var i = 0; i < lineCount; i++)
             {
-                var newData = value.OrderByDescending(item => item.UpdateTime).FirstOrDefault();
-                var oldData = Points.FirstOrDefault(item => item.Name == pointName);
-                if (oldData == null)
+                var seriesValues = new ObservableCollection<DateTimePoint?>();
+                _values.Add(seriesValues);
+                Series.Add(new LineSeries<DateTimePoint?>
                 {
-                    Points.Add(new PointModel() { Name = pointName, Value = newData?.Value });
+                    Values = seriesValues,
+                    Fill = null,
+                    GeometryFill = null,
+                    GeometryStroke = null,
+                    LineSmoothness = 0
+                });
+            }
+
+            _customAxis = new DateTimeAxis(TimeSpan.FromSeconds(1), date => $"{date:HH:mm:ss}")
+            {
+                Name = "时间",
+                AnimationsSpeed = TimeSpan.FromMilliseconds(0),
+                SeparatorsPaint = new SolidColorPaint(SKColors.Black.WithAlpha(100))
+            };
+
+            XAxes = [_customAxis];
+
+
+            YAxes =
+            [
+                new Axis
+                {
+                    Name = "点值",
+                    NamePadding = new LiveChartsCore.Drawing.Padding(0, 15),
+                    Labeler = Labelers.Default,
+                    LabelsPaint = new SolidColorPaint
+                    {
+                        Color = SKColors.Blue,
+                        FontFamily = "Times New Roman",
+                        SKFontStyle = new SKFontStyle(SKFontStyleWeight.ExtraBold, SKFontStyleWidth.Normal,
+                            SKFontStyleSlant.Italic)
+                    },
                 }
-                else
+            ];
+
+            _ = ReadData();
+        }
+
+        public ObservableCollection<ISeries> Series { get; set; }
+        public Axis[] XAxes { get; set; }
+
+        public Axis[] YAxes { get; set; }
+
+        public object Sync { get; } = new object();
+
+        public bool IsReading { get; set; } = true;
+
+        private async Task ReadData()
+        {
+            while (IsReading)
+            {
+                await Task.Delay(100);
+
+                lock (Sync)
                 {
-                    oldData.Value = newData?.Value;
-                    //oldData.UpdateTime = newData?.UpdateTime;
+                    var time = DateTime.Now;
+                    _values.ForEach(list =>
+                    {
+                        if (DateTime.Now.Microsecond % 3 == 1)
+                        {
+                            list.Add(null);
+                        }
+                        else
+                        {
+                            list.Add(new DateTimePoint(time, Random.Shared.Next(-300, 600)));
+                        }
+                        if (list.Count > 50)
+                        {
+                            list.RemoveAt(0);
+                        }
+                    });
                 }
             }
         }

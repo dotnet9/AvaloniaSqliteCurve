@@ -3,6 +3,9 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using AvaloniaSqliteCurve.ViewModels;
 using AvaloniaSqliteCurve.Views;
+using LiveChartsCore;
+using LiveChartsCore.SkiaSharpView;
+using SkiaSharp;
 
 namespace AvaloniaSqliteCurve
 {
@@ -11,6 +14,11 @@ namespace AvaloniaSqliteCurve
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
+            LiveCharts.Configure(config =>
+                config
+                    .HasGlobalSKTypeface(SKFontManager.Default.MatchCharacter('บบ'))
+                    .HasMap<City>((city, index) => new(index, city.Population))
+            );
         }
 
         public override void OnFrameworkInitializationCompleted()
@@ -25,5 +33,7 @@ namespace AvaloniaSqliteCurve
 
             base.OnFrameworkInitializationCompleted();
         }
+
+        public record City(string Name, double Population);
     }
 }

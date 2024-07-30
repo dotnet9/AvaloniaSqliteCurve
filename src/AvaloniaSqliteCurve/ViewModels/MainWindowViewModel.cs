@@ -156,11 +156,6 @@ public class MainWindowViewModel : ViewModelBase
         await _fileChooserService!.OpenFolderAsync(DataDir);
     }
 
-    public void ExecuteOpenScottPlotHandle()
-    {
-        new AvaPlotWindow().Show();
-    }
-
     public async Task ExecuteRunningHandle()
     {
         IsRunning = !IsRunning;

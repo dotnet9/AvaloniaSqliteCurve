@@ -11,7 +11,7 @@
         <vm:PointChartViewModel />
     </Design.DataContext>
     <Grid>
-        <lvc:CartesianChart
+        <lvc:CartesianChart AnimationsSpeed="00:00:00.300"
             SyncContext="{Binding Sync}"
             Series="{Binding Series}"
             XAxes="{Binding XAxes}"

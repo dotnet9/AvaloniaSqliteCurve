@@ -1,12 +1,10 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 
 namespace AvaloniaSqliteCurve;
 
-public partial class LiveCharts2Demo : Window
+public partial class LiveCharts2Demo2 : Window
 {
-    public LiveCharts2Demo()
+    public LiveCharts2Demo2()
     {
         InitializeComponent();
     }

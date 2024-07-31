@@ -161,6 +161,11 @@ public class MainWindowViewModel : ViewModelBase
         new LiveCharts2Demo().Show();
     }
 
+    public void ExecuteShowLiveCharts2_2DemoHandle()
+    {
+        new LiveCharts2Demo2().Show();
+    }
+
     public void ExecuteShowScottPlotDemoHandle()
     {
         new ScottPlotDemo().Show();

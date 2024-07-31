@@ -18,7 +18,7 @@ namespace AvaloniaSqliteCurve.ViewModels
 
         public PointChartViewModel()
         {
-            var lineCount = Random.Shared.Next(5, 16);
+            var lineCount = Random.Shared.Next(5, 36);
             Series = [];
             for (var i = 0; i < lineCount; i++)
             {
@@ -34,10 +34,10 @@ namespace AvaloniaSqliteCurve.ViewModels
                 });
             }
 
-            _customAxis = new DateTimeAxis(TimeSpan.FromSeconds(1), date => $"{date:HH:mm:ss}")
+            _customAxis = new DateTimeAxis(TimeSpan.FromMinutes(1), date => $"{date:HH:mm:00}")
             {
                 Name = "时间",
-                AnimationsSpeed = TimeSpan.FromMilliseconds(0),
+                AnimationsSpeed = TimeSpan.FromMilliseconds(100),
                 SeparatorsPaint = new SolidColorPaint(SKColors.Black.WithAlpha(100))
             };
 
@@ -92,7 +92,7 @@ namespace AvaloniaSqliteCurve.ViewModels
                         {
                             list.Add(new DateTimePoint(time, Random.Shared.Next(-300, 600)));
                         }
-                        if (list.Count > 50)
+                        if (list.Count > 30000)
                         {
                             list.RemoveAt(0);
                         }

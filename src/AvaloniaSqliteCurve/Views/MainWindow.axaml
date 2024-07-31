@@ -33,6 +33,7 @@
                 <Button Content="修改" Command="{Binding ExecuteChoiceFolderHandle}" />
 				<Button Content="打开" Command="{Binding ExecuteOpenFolderHandle}" />
                 <Button Content="LiveCharts2" Command="{Binding ExecuteShowLiveCharts2DemoHandle}" />
+                <Button Content="LiveCharts2_2" Command="{Binding ExecuteShowLiveCharts2_2DemoHandle}" />
                 <Button Content="ScottPlot" Command="{Binding ExecuteShowScottPlotDemoHandle}" />
             </StackPanel>
         </Grid>

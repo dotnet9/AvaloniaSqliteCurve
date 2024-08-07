@@ -6,19 +6,18 @@ using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace AvaloniaSqliteCurve.ViewModels
 {
-    internal class PointChartViewModel : ViewModelBase
+    internal class LiveCharts2DemoViewModel : ViewModelBase
     {
         private readonly List<ObservableCollection<DateTimePoint?>> _values = new();
         private readonly DateTimeAxis _customAxis;
 
-        public PointChartViewModel()
+        public LiveCharts2DemoViewModel()
         {
-            var lineCount = Random.Shared.Next(5, 36);
+            var lineCount = 3;
             Series = [];
             for (var i = 0; i < lineCount; i++)
             {
@@ -34,7 +33,7 @@ namespace AvaloniaSqliteCurve.ViewModels
                 });
             }
 
-            _customAxis = new DateTimeAxis(TimeSpan.FromMinutes(1), date => $"{date:HH:mm:00}")
+            _customAxis = new DateTimeAxis(TimeSpan.FromMinutes(1), date => $"{date:HH:mm}:00")
             {
                 Name = "时间",
                 AnimationsSpeed = TimeSpan.FromMilliseconds(100),
@@ -84,7 +83,7 @@ namespace AvaloniaSqliteCurve.ViewModels
                     var time = DateTime.Now;
                     _values.ForEach(list =>
                     {
-                        if (DateTime.Now.Microsecond % 3 == 1)
+                        if (DateTime.Now.Microsecond % 9 == 1)
                         {
                             list.Add(null);
                         }
@@ -92,7 +91,7 @@ namespace AvaloniaSqliteCurve.ViewModels
                         {
                             list.Add(new DateTimePoint(time, Random.Shared.Next(-300, 600)));
                         }
-                        if (list.Count > 30000)
+                        if (list.Count > 300)
                         {
                             list.RemoveAt(0);
                         }

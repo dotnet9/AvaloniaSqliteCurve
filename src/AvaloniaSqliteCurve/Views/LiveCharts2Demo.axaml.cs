@@ -1,10 +1,10 @@
 using Avalonia.Controls;
 
-namespace AvaloniaSqliteCurve;
+namespace AvaloniaSqliteCurve.Views;
 
-public partial class LiveCharts2Demo2 : Window
+public partial class LiveCharts2Demo : Window
 {
-    public LiveCharts2Demo2()
+    public LiveCharts2Demo()
     {
         InitializeComponent();
     }

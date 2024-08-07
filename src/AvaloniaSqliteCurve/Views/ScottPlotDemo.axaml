@@ -3,8 +3,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ScottPlot="clr-namespace:ScottPlot.Avalonia;assembly=ScottPlot.Avalonia"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+        WindowState="Maximized"
         Width="800" Height="450"
         x:Class="AvaloniaSqliteCurve.ScottPlotDemo">
-    <ScottPlot:AvaPlot Name="AvaPlot1"/>
+    <Grid ColumnDefinitions="*, Auto" Margin="10">
+        <ScottPlot:AvaPlot Name="plot" />
+        <ItemsControl Name="MaxItems" Grid.Column="1" VerticalAlignment="Top" Margin="-5 30 0 0"/>
+        <ItemsControl Name="MinItems" Grid.Column="1" VerticalAlignment="Bottom" Margin="-5 0 0 40"/>
+    </Grid>
 </Window>

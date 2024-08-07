@@ -1,10 +1,10 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:AvaloniaSqliteCurve.ViewModels"
-        xmlns:views="using:AvaloniaSqliteCurve.Views"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="150"
+        Width="300" Height="150"
         x:Class="AvaloniaSqliteCurve.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico" Padding="20"
@@ -13,68 +13,13 @@
         <vm:MainWindowViewModel />
     </Design.DataContext>
     <Window.Styles>
-        <Style Selector="TextBlock">
-            <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="Margin" Value="20 0 0 0"></Setter>
-        </Style>
         <Style Selector="Button">
-            <Setter Property="Margin" Value="5 0" />
-        </Style>
-        <Style Selector="ToggleSwitch">
-            <Setter Property="Margin" Value="5 0" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="Margin" Value="10" />
         </Style>
     </Window.Styles>
-    <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, *">
-        <Grid ColumnDefinitions="Auto, 700, Auto, *">
-            <TextBlock Text="数据目录：" />
-            <TextBox Grid.Column="1" Text="{Binding DataDir}" />
-            <StackPanel Orientation="Horizontal" Grid.Column="2">
-                <Button Content="修改" Command="{Binding ExecuteChoiceFolderHandle}" />
-				<Button Content="打开" Command="{Binding ExecuteOpenFolderHandle}" />
-                <Button Content="LiveCharts2" Command="{Binding ExecuteShowLiveCharts2DemoHandle}" />
-                <Button Content="LiveCharts2_2" Command="{Binding ExecuteShowLiveCharts2_2DemoHandle}" />
-                <Button Content="ScottPlot" Command="{Binding ExecuteShowScottPlotDemoHandle}" />
-            </StackPanel>
-        </Grid>
-        <Grid Grid.Row="1" Margin="0 15" ColumnDefinitions="Auto, 70, Auto, 70, Auto, *">
-            <TextBlock Text="模拟点数：" />
-            <TextBox Grid.Column="1" Text="{Binding PointCount}" IsEnabled="{Binding !IsRunning}" />
-            <TextBlock Grid.Column="2" Text="更新频率(ms)：" />
-            <TextBox Grid.Column="3" Text="{Binding UpdateMilliseconds}" IsEnabled="{Binding !IsRunning}" />
-            <Button Content="{Binding RunningContent}" Grid.Column="4" Command="{Binding ExecuteRunningHandle}" />
-        </Grid>
-        <Grid Grid.Row="2" ColumnDefinitions="Auto, 70, Auto, 70, Auto, *">
-            <TextBlock Text="曲线点数：" />
-            <TextBox Grid.Column="1" Text="{Binding PlotPointCount}" />
-            <ToggleSwitch Grid.Column="2"
-                          IsChecked="{Binding IsShowRealtime}"
-                          Command="{Binding ExecuteChangePlotChartKindHandler}"
-                          OnContent="实时数据" OffContent="历史数据"
-                          x:Name="ShowRealtimeData">
-            </ToggleSwitch>
-        </Grid>
-        <StackPanel x:Name="RealtimePanel" Orientation="Horizontal" Grid.Row="3"
-                    IsVisible="{Binding IsChecked,ElementName=ShowRealtimeData}">
-            <Button Content="切换一批数据" Command="{Binding ExecuteChangePlotChartPointHandler}" />
-            <ToggleButton Content="四分窗口" IsChecked="{Binding IsFourPlotCharts}"
-                          Command="{Binding ExecuteChangePlotChartKindHandler}" />
-        </StackPanel>
-        <StackPanel x:Name="HistoryPanel" Orientation="Horizontal" Grid.Row="3"
-                    IsVisible="{Binding !IsChecked,ElementName=ShowRealtimeData}">
-            <TextBlock Text="开始时间："></TextBlock>
-            <TextBox Text="{Binding StartDate}" />
-            <TextBlock Text="结束时间："></TextBlock>
-            <TextBox Text="{Binding EndDate}" />
-            <Button Content="切换一批数据" Command="{Binding ExecuteChangePlotChartPointHandler}" />
-            <Button Content="查询" Command="{Binding ExecuteSearchPointsHandler}" />
-            <TextBlock Text="{Binding DisplayMsg}" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Grid.Row="4">
-            <TextBlock>
-                <Run Text="查询点：" />
-            </TextBlock>
-            <TextBox Text="{Binding DisplayChartPoints}" TextWrapping="Wrap" MaxWidth="800" Height="100" />
-        </StackPanel>
-    </Grid>
+    <StackPanel>
+        <Button Content="LiveCharts2" Command="{Binding ExecuteShowLiveCharts2DemoHandle}" />
+        <Button Content="ScottPlot" Command="{Binding ExecuteShowScottPlotDemoHandle}" />
+    </StackPanel>
 </Window>

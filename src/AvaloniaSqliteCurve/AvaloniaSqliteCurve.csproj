@@ -9,23 +9,25 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Dto\" />
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
 
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.1.1" />
-    <PackageReference Include="Avalonia.Desktop" Version="11.1.1" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.1.1" />
+    <PackageReference Include="Avalonia" Version="11.1.2-rc1" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.1.2-rc1" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.1.2-rc1" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.1.1" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="11.1.1" />
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.1.2-rc1" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="11.1.2-rc1" />
     <PackageReference Include="CodeWF.EventBus" Version="3.4.4" />
+    <PackageReference Include="CodeWF.Tools" Version="1.2.0" />
     <PackageReference Include="Dapper" Version="2.1.35" />
+    <PackageReference Include="Irihi.Ursa" Version="1.0.0" />
+    <PackageReference Include="Irihi.Ursa.Themes.Semi" Version="1.0.0" />
     <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc2" />
     <PackageReference Include="ScottPlot.Avalonia" Version="5.0.37" />
-    <PackageReference Include="Semi.Avalonia" Version="11.1.0" />
+    <PackageReference Include="Semi.Avalonia" Version="11.1.0.1" />
     <PackageReference Include="Semi.Avalonia.DataGrid" Version="11.1.0" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.118" />
   </ItemGroup>

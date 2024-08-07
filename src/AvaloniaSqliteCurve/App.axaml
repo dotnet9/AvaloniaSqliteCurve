@@ -1,5 +1,6 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:u-semi="https://irihi.tech/ursa/themes/semi"
              x:Class="AvaloniaSqliteCurve.App"
              xmlns:local="using:AvaloniaSqliteCurve"
              xmlns:semi="https://irihi.tech/semi">
@@ -8,8 +9,9 @@
     </Application.DataTemplates>
   
     <Application.Styles>
+        <semi:SemiTheme Locale="zh-cn" />
+        <u-semi:SemiTheme Locale="zh-CN"/>
         <StyleInclude Source="avares://Semi.Avalonia/Themes/Index.axaml" />
         <StyleInclude Source="avares://Semi.Avalonia.DataGrid/Index.axaml" />
-        <semi:SemiTheme Locale="zh-CN" />
     </Application.Styles>
 </Application>

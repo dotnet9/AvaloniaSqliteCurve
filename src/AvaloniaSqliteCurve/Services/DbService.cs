@@ -1,5 +1,4 @@
 ﻿using AvaloniaSqliteCurve.Entities;
-using AvaloniaSqliteCurve.Helpers;
 using Dapper;
 using System;
 using System.Collections.Generic;
@@ -8,6 +7,7 @@ using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using CodeWF.Tools.Extensions;
 
 namespace AvaloniaSqliteCurve.Services;
 
@@ -55,8 +55,8 @@ internal class DbService : IDbService
             var latestEnd = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day, 23, 59, 59, 999);
             var currentDateStart = earlyStart > startDateTime ? earlyStart : startDateTime;
             var currentDateEnd = endDateTime < latestEnd ? endDateTime : latestEnd;
-            var startTime = currentDateStart.ToTodayTimestamp();
-            var endTime = currentDateEnd.ToTodayTimestamp();
+            var startTime = currentDateStart.GetUnixTimeSeconds();
+            var endTime = currentDateEnd.GetUnixTimeSeconds();
             return OpenDbAndQueryAsync(currentDate, names, startTime, endTime);
         }).ToList();
 
@@ -88,7 +88,7 @@ internal class DbService : IDbService
 
     private async Task<Dictionary<string, List<PointValue>?>> OpenDbAndQueryAsync(DateTime dbCreateDate,
         List<string> names,
-        int startTimestamp, int endTimestamp)
+        long startTimestamp, long endTimestamp)
     {
         var nameAndValues = new Dictionary<string, List<PointValue>?>();
 

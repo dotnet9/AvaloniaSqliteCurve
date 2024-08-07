@@ -6,7 +6,7 @@ public class MainWindowViewModel : ViewModelBase
 {
     public void ExecuteShowLiveCharts2DemoHandle()
     {
-        new LiveCharts2Demo().Show();
+        new LiveCharts2Demo() { DataContext = new LiveCharts2DemoViewModel() }.Show();
     }
 
     public void ExecuteShowScottPlotDemoHandle()

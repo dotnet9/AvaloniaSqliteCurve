@@ -10,12 +10,17 @@
         WindowState="Maximized"
         x:Class="AvaloniaSqliteCurve.Views.LiveCharts2Demo">
     <Design.DataContext>
-		<viewModels:LiveCharts2DemoViewModel />
+        <viewModels:LiveCharts2DemoViewModel />
     </Design.DataContext>
-	<lvc:CartesianChart AnimationsSpeed="00:00:00.300"
-                        SyncContext="{Binding Sync}"
-                        Series="{Binding Series}"
-                        XAxes="{Binding XAxes}"
-                        YAxes="{Binding YAxes}">
-    </lvc:CartesianChart>
+    <Grid RowDefinitions="30 *">
+        <StackPanel Orientation="Horizontal">
+            <Button Content="换一批数据" Command="{Binding RaiseChangeDataCommand}"/>
+        </StackPanel>
+        <lvc:CartesianChart AnimationsSpeed="00:00:00.300" Grid.Row="1" EasingFunction="{x:Null}"
+                            x:Name="LvCharts"
+                            Series="{Binding Series}"
+                            XAxes="{Binding XAxes}"
+                            YAxes="{Binding YAxes}">
+        </lvc:CartesianChart>
+    </Grid>
 </Window>

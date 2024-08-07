@@ -6,98 +6,106 @@ using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Threading.Tasks;
+using DynamicData;
+using AvaloniaSqliteCurve.Extensions;
 
 namespace AvaloniaSqliteCurve.ViewModels
 {
     internal class LiveCharts2DemoViewModel : ViewModelBase
     {
-        private readonly List<ObservableCollection<DateTimePoint?>> _values = new();
-        private readonly DateTimeAxis _customAxis;
+        private readonly Dictionary<int, RangeObservableCollectionT<DateTimePoint?>> _values = new();
+        public ObservableCollection<ISeries> Series { get; } = new();
 
-        public LiveCharts2DemoViewModel()
-        {
-            var lineCount = 3;
-            Series = [];
-            for (var i = 0; i < lineCount; i++)
+        public Axis[] XAxes { get; } =
+        [
+            new DateTimeAxis(TimeSpan.FromMinutes(1), date => $"{date:HH:mm}:00")
+        ];
+
+        public Axis[] YAxes { get; } =
+        [
+            new Axis
             {
-                var seriesValues = new ObservableCollection<DateTimePoint?>();
-                _values.Add(seriesValues);
-                Series.Add(new LineSeries<DateTimePoint?>
+                Name = "点值",
+                NamePadding = new LiveChartsCore.Drawing.Padding(0, 15),
+                Labeler = Labelers.Default,
+                LabelsPaint = new SolidColorPaint
                 {
-                    Values = seriesValues,
-                    Fill = null,
-                    GeometryFill = null,
-                    GeometryStroke = null,
-                    LineSmoothness = 0
-                });
+                    Color = SKColors.Blue,
+                    FontFamily = "Times New Roman",
+                    SKFontStyle = new SKFontStyle(SKFontStyleWeight.ExtraBold, SKFontStyleWidth.Normal,
+                        SKFontStyleSlant.Italic)
+                },
             }
+        ];
 
-            _customAxis = new DateTimeAxis(TimeSpan.FromMinutes(1), date => $"{date:HH:mm}:00")
-            {
-                Name = "时间",
-                AnimationsSpeed = TimeSpan.FromMilliseconds(100),
-                SeparatorsPaint = new SolidColorPaint(SKColors.Black.WithAlpha(100))
-            };
-
-            XAxes = [_customAxis];
-
-
-            YAxes =
-            [
-                new Axis
-                {
-                    Name = "点值",
-                    NamePadding = new LiveChartsCore.Drawing.Padding(0, 15),
-                    Labeler = Labelers.Default,
-                    LabelsPaint = new SolidColorPaint
-                    {
-                        Color = SKColors.Blue,
-                        FontFamily = "Times New Roman",
-                        SKFontStyle = new SKFontStyle(SKFontStyleWeight.ExtraBold, SKFontStyleWidth.Normal,
-                            SKFontStyleSlant.Italic)
-                    },
-                }
-            ];
-
-            _ = ReadData();
-        }
-
-        public ObservableCollection<ISeries> Series { get; set; }
-        public Axis[] XAxes { get; set; }
-
-        public Axis[] YAxes { get; set; }
-
-        public object Sync { get; } = new object();
-
-        public bool IsReading { get; set; } = true;
-
-        private async Task ReadData()
+        public void RaiseChangeDataCommand()
         {
-            while (IsReading)
-            {
-                await Task.Delay(100);
+            var everLinePointCount = 1000;
+            var lineCount = 16;
 
-                lock (Sync)
+            var st = Stopwatch.StartNew();
+
+            if (Series.Count <= 0)
+            {
+                for (var i = 0; i < lineCount; i++)
                 {
-                    var time = DateTime.Now;
-                    _values.ForEach(list =>
+                    var seriesValues = new RangeObservableCollectionT<DateTimePoint?>();
+                    _values.Add(i, seriesValues);
+                    Series.Add(new LineSeries<DateTimePoint?>
                     {
-                        if (DateTime.Now.Microsecond % 9 == 1)
-                        {
-                            list.Add(null);
-                        }
-                        else
-                        {
-                            list.Add(new DateTimePoint(time, Random.Shared.Next(-300, 600)));
-                        }
-                        if (list.Count > 300)
-                        {
-                            list.RemoveAt(0);
-                        }
+                        Values = seriesValues,
+                        Fill = null,
+                        GeometryFill = null,
+                        GeometryStroke = null,
+                        LineSmoothness = 0
                     });
                 }
             }
+
+            st.Stop();
+            Debug.WriteLine($"生成曲线耗时：{st.ElapsedMilliseconds}ms");
+
+            st.Restart();
+            foreach (var value in _values)
+            {
+                value.Value.Clear();
+            }
+
+            st.Stop();
+            Debug.WriteLine($"清空曲线耗时：{st.ElapsedMilliseconds}ms");
+
+            st.Restart();
+            Dictionary<int, List<DateTimePoint?>> dataList = new();
+            for (var i = 0; i < lineCount; i++)
+            {
+                dataList[i] = new List<DateTimePoint?>();
+            }
+
+            var time = DateTime.Now;
+            for (var j = 0; j < everLinePointCount; j++)
+            {
+                var currentTime = time.AddMilliseconds(j * 500);
+                for (var i = 0; i < lineCount; i++)
+                {
+                    dataList[i].Add(Random.Shared.Next(1, 1000) % 9 == 1
+                        ? default
+                        : new DateTimePoint(currentTime, Random.Shared.Next(-300, 600)));
+                }
+            }
+
+            st.Stop();
+            Debug.WriteLine($"生成数据耗时：{st.ElapsedMilliseconds}ms");
+
+            st.Restart();
+            foreach (var data in dataList)
+            {
+                _values[data.Key].Add(data.Value);
+            }
+
+            st.Stop();
+            Debug.WriteLine($"绑定曲线耗时：{st.ElapsedMilliseconds}ms");
         }
     }
 }

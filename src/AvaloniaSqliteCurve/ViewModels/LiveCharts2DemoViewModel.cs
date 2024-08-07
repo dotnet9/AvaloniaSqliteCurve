@@ -1,4 +1,6 @@
-﻿using LiveChartsCore;
+﻿using AvaloniaSqliteCurve.Extensions;
+using DynamicData;
+using LiveChartsCore;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
@@ -8,14 +10,15 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using DynamicData;
-using AvaloniaSqliteCurve.Extensions;
 
 namespace AvaloniaSqliteCurve.ViewModels
 {
     internal class LiveCharts2DemoViewModel : ViewModelBase
     {
+        private const int EverLinePointCount = 1000;
+        private const int LineCount = 16;
         private readonly Dictionary<int, RangeObservableCollectionT<DateTimePoint?>> _values = new();
+
         public ObservableCollection<ISeries> Series { get; } = new();
 
         public Axis[] XAxes { get; } =
@@ -42,17 +45,19 @@ namespace AvaloniaSqliteCurve.ViewModels
 
         public void RaiseChangeDataCommand()
         {
-            var everLinePointCount = 1000;
-            var lineCount = 16;
+            Task.Factory.StartNew(UpdateData);
+        }
 
+        private void UpdateData()
+        {
             var st = Stopwatch.StartNew();
 
             if (Series.Count <= 0)
             {
-                for (var i = 0; i < lineCount; i++)
+                for (var i = 0; i < LineCount; i++)
                 {
                     var seriesValues = new RangeObservableCollectionT<DateTimePoint?>();
-                    _values.Add(i, seriesValues);
+                    _values[i] = seriesValues;
                     Series.Add(new LineSeries<DateTimePoint?>
                     {
                         Values = seriesValues,
@@ -78,16 +83,16 @@ namespace AvaloniaSqliteCurve.ViewModels
 
             st.Restart();
             Dictionary<int, List<DateTimePoint?>> dataList = new();
-            for (var i = 0; i < lineCount; i++)
+            for (var i = 0; i < LineCount; i++)
             {
                 dataList[i] = new List<DateTimePoint?>();
             }
 
             var time = DateTime.Now;
-            for (var j = 0; j < everLinePointCount; j++)
+            for (var j = 0; j < EverLinePointCount; j++)
             {
                 var currentTime = time.AddMilliseconds(j * 500);
-                for (var i = 0; i < lineCount; i++)
+                for (var i = 0; i < LineCount; i++)
                 {
                     dataList[i].Add(Random.Shared.Next(1, 1000) % 9 == 1
                         ? default

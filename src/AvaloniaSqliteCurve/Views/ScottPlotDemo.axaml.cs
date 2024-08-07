@@ -2,13 +2,13 @@ using Avalonia.Controls;
 using Avalonia.Media;
 using AvaloniaSqliteCurve.Models;
 using System;
-using Color = System.Drawing.Color;
 
-namespace AvaloniaSqliteCurve;
+namespace AvaloniaSqliteCurve.Views;
 
 public partial class ScottPlotDemo : Window
 {
     private static readonly string PlotFont = "Noto Sans TC"; //Segoe UI; Noto Sans; SimSun;Noto Mono;
+    private static int _addCount = 0;
 
     static ScottPlotDemo()
     {
@@ -50,7 +50,8 @@ public partial class ScottPlotDemo : Window
 
     private void TimerElapsed(object? sender, EventArgs e)
     {
-        var dt = DateTime.Now;
+        _addCount++;
+        var dt = DateTime.Now.AddMilliseconds(_addCount * 500);
         for (var i = 0; i < LineCount; i++)
         {
             _lines![i].Update(dt, Random.Shared.Next(-500, 500));
@@ -78,10 +79,9 @@ public partial class ScottPlotDemo : Window
         var start = DateTime.Now;
         for (var i = 0; i < LineCount; i++)
         {
-            _lines[i] = new LiveLineModel( plot.Plot,$"name{i}");
+            _lines[i] = new LiveLineModel(plot.Plot, $"name{i}");
             AddLimit(Random.Shared.Next(-100, 100), Random.Shared.Next(300, 600), _lines[i].Scatter!.Color);
         }
-        //plot.Plot.Benchmark.IsVisible = true;
     }
 
     private void AddLimit(double min, double max, ScottPlot.Color color)

@@ -8,10 +8,10 @@ namespace AvaloniaSqliteCurve.Models;
 public class LiveLineModel
 {
     public const int MaxPointCount = 100;
-    private string _name;
-    private Scatter _scatter;
-    private double[]? _xs;
-    private double[]? _ys;
+    private readonly string _name;
+    private readonly Scatter _scatter;
+    private readonly double[]? _xs;
+    private readonly double[]? _ys;
 
     public Scatter? Scatter => _scatter;
 

@@ -7,7 +7,7 @@
         xmlns:viewModels="clr-namespace:AvaloniaSqliteCurve.ViewModels"
         x:DataType="viewModels:LiveCharts2DemoViewModel"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        WindowState="Maximized"
+        WindowState="Maximized" Title="LiveCharts2"
         x:Class="AvaloniaSqliteCurve.Views.LiveCharts2Demo">
     <Design.DataContext>
         <viewModels:LiveCharts2DemoViewModel />
@@ -20,7 +20,8 @@
                             x:Name="LvCharts"
                             Series="{Binding Series}"
                             XAxes="{Binding XAxes}"
-                            YAxes="{Binding YAxes}">
+                            YAxes="{Binding YAxes}"
+                            ZoomMode="None">
         </lvc:CartesianChart>
     </Grid>
 </Window>

@@ -14,12 +14,12 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.1.2-rc1" />
-    <PackageReference Include="Avalonia.Desktop" Version="11.1.2-rc1" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.1.2-rc1" />
+    <PackageReference Include="Avalonia" Version="11.1.2" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.1.2" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.1.2" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.1.2-rc1" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="11.1.2-rc1" />
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.1.2" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="11.1.2" />
     <PackageReference Include="CodeWF.EventBus" Version="3.4.4" />
     <PackageReference Include="CodeWF.Tools" Version="1.2.0" />
     <PackageReference Include="Dapper" Version="2.1.35" />

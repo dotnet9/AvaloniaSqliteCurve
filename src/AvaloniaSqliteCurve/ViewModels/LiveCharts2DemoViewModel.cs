@@ -1,21 +1,23 @@
 ﻿using AvaloniaSqliteCurve.Extensions;
 using DynamicData;
 using LiveChartsCore;
-using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
+using LiveChartsCore.SkiaSharpView.VisualElements;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Avalonia.Platform;
+using LiveChartsCore.Defaults;
 
 namespace AvaloniaSqliteCurve.ViewModels
 {
     internal class LiveCharts2DemoViewModel : ViewModelBase
     {
-        private const int EverLinePointCount = 1000;
+        private const int EverLinePointCount = 100;
         private const int LineCount = 16;
         private readonly Dictionary<int, RangeObservableCollectionT<DateTimePoint?>> _values = new();
 
@@ -30,7 +32,6 @@ namespace AvaloniaSqliteCurve.ViewModels
         [
             new Axis
             {
-                Name = "点值",
                 NamePadding = new LiveChartsCore.Drawing.Padding(0, 15),
                 Labeler = Labelers.Default,
                 LabelsPaint = new SolidColorPaint
@@ -64,7 +65,8 @@ namespace AvaloniaSqliteCurve.ViewModels
                         Fill = null,
                         GeometryFill = null,
                         GeometryStroke = null,
-                        LineSmoothness = 0
+                        LineSmoothness = 0,
+                        Stroke = new SolidColorPaint(new SKColor(255, 0, 0)){StrokeThickness = 1}
                     });
                 }
             }
@@ -91,7 +93,7 @@ namespace AvaloniaSqliteCurve.ViewModels
             var time = DateTime.Now;
             for (var j = 0; j < EverLinePointCount; j++)
             {
-                var currentTime = time.AddMilliseconds(j * 500);
+                var currentTime = time.AddMilliseconds(j * 500*60);
                 for (var i = 0; i < LineCount; i++)
                 {
                     dataList[i].Add(Random.Shared.Next(1, 1000) % 9 == 1

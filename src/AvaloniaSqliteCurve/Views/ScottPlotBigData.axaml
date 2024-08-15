@@ -8,8 +8,18 @@
         x:Class="AvaloniaSqliteCurve.Views.ScottPlotBigData">
 	<Grid RowDefinitions="30 *">
 		<StackPanel Orientation="Horizontal">
-			<Button Content="换一批数据" Click="Button_OnClick" />
-		</StackPanel>
+            <ComboBox SelectionChanged="SelectingItemsControl_OnSelectionChanged">
+                <ComboBoxItem Tag="5">5分钟</ComboBoxItem>
+                <ComboBoxItem Tag="10">10分钟</ComboBoxItem>
+                <ComboBoxItem Tag="30">30分钟</ComboBoxItem>
+                <ComboBoxItem Tag="60">1小时</ComboBoxItem>
+                <ComboBoxItem Tag="120">2小时</ComboBoxItem>
+                <ComboBoxItem Tag="240">4小时</ComboBoxItem>
+                <ComboBoxItem Tag="480">8小时</ComboBoxItem>
+                <ComboBoxItem Tag="1440">1天</ComboBoxItem>
+                <ComboBoxItem Tag="2880">2天</ComboBoxItem>
+            </ComboBox>
+        </StackPanel>
 		<ScottPlot:AvaPlot Name="plot" Grid.Row="1" />
 	</Grid>
 </Window>

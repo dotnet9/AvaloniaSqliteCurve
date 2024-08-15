@@ -15,13 +15,13 @@
     <Grid RowDefinitions="30 *">
         <StackPanel Orientation="Horizontal">
             <Button Content="换一批数据" Command="{Binding RaiseChangeDataCommand}"/>
+            <Button Content="保存截图" Click="SaveChartsToImage_OnClick" />
         </StackPanel>
-        <lvc:CartesianChart AnimationsSpeed="00:00:00.300" Grid.Row="1" EasingFunction="{x:Null}"
-                            x:Name="LvCharts"
-                            Series="{Binding Series}"
-                            XAxes="{Binding XAxes}"
-                            YAxes="{Binding YAxes}"
-                            ZoomMode="None">
+        <lvc:CartesianChart Grid.Row="1" 
+                            x:Name="LvCharts" EasingFunction="{x:Null}"
+                            Series="{Binding Series, Mode=OneWay}"
+                            XAxes="{Binding XAxes, Mode=OneWay}"
+                            YAxes="{Binding YAxes, Mode=OneWay}">
         </lvc:CartesianChart>
     </Grid>
 </Window>

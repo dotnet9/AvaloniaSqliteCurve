@@ -1,7 +1,7 @@
-using Avalonia.Controls;
-using Avalonia.Media;
 using AvaloniaSqliteCurve.Models;
 using System;
+using Avalonia.Controls;
+using Avalonia.Media;
 
 namespace AvaloniaSqliteCurve.Views;
 
@@ -65,9 +65,6 @@ public partial class ScottPlotDemo : Window
     {
         if (plot == null) return;
 
-        plot.Plot.Title("实时数据");
-        plot.Plot.YLabel("实时值");
-        plot.Plot.XLabel("时间");
         plot.Plot.Axes.Title.Label.Text = "实时数据";
         plot.Plot.Axes.Title.Label.FontName = PlotFont;
         plot.Plot.Axes.Title.IsVisible = true;

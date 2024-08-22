@@ -1,7 +1,10 @@
 using AvaloniaSqliteCurve.Models;
 using System;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.Interactivity;
 using Avalonia.Media;
+using AvaloniaSqliteCurve.Extensions;
 
 namespace AvaloniaSqliteCurve.Views;
 
@@ -71,6 +74,7 @@ public partial class ScottPlotDemo : Window
         plot.Plot.ShowLegend();
         plot.Plot.Legend.IsVisible = true;
         plot.Plot.Axes.DateTimeTicksBottom();
+        plot.Plot.DataBackground.Color = ScottPlot.Colors.LightCyan;
 
         _lines = new LiveLineModel[LineCount];
         var start = DateTime.Now;
@@ -94,5 +98,22 @@ public partial class ScottPlotDemo : Window
             Text = $"{max}",
             Foreground = textColor
         });
+    }
+
+    private void ChangeBackgroundColor_OnColorChanged(object? sender, ColorChangedEventArgs e)
+    {
+        var selectedColor = BackgroundColorPicker.Color;
+        plot.Plot.DataBackground.Color = selectedColor.ToScottPlotColor();
+    }
+
+    private void GridColorPicker_OnColorChanged(object? sender, ColorChangedEventArgs e)
+    {
+        var selectedColor = GridColorPicker.Color;
+        plot.Plot.Grid.MajorLineColor = plot.Plot.Grid.MinorLineColor = selectedColor.ToScottPlotColor();
+    }
+
+    private void ShowGird_OnClick(object? sender, RoutedEventArgs e)
+    {
+        plot.Plot.Grid.IsVisible = !plot.Plot.Grid.IsVisible;
     }
 }

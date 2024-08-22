@@ -3,13 +3,29 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ScottPlot="clr-namespace:ScottPlot.Avalonia;assembly=ScottPlot.Avalonia"
+        xmlns:colorPicker="clr-namespace:Semi.Avalonia.ColorPicker;assembly=Semi.Avalonia.ColorPicker"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
         WindowState="Maximized"
         Width="800" Height="450" Title="ScrottPlot Realtime"
         x:Class="AvaloniaSqliteCurve.Views.ScottPlotDemo">
-    <Grid ColumnDefinitions="*, Auto" Margin="10">
-        <ScottPlot:AvaPlot Name="plot" />
-        <ItemsControl Name="MaxItems" Grid.Column="1" VerticalAlignment="Top" Margin="-5 30 0 0"/>
-        <ItemsControl Name="MinItems" Grid.Column="1" VerticalAlignment="Bottom" Margin="-5 0 0 40"/>
+    <Grid RowDefinitions="Auto, *" ColumnDefinitions="*, Auto" Margin="10">
+        <StackPanel Orientation="Horizontal" >
+            <TextBlock Text="背景色" VerticalAlignment="Center"/>
+            <ColorPicker ColorSpectrumShape="Box" Name="BackgroundColorPicker" ColorChanged="ChangeBackgroundColor_OnColorChanged">
+                <ColorPicker.Palette>
+                    <colorPicker:SemiColorLightPalette />
+                </ColorPicker.Palette>
+            </ColorPicker>
+			<TextBlock Text="网格色"  Margin="5 0" VerticalAlignment="Center"/>
+            <ColorPicker ColorSpectrumShape="Box" Name="GridColorPicker" ColorChanged="GridColorPicker_OnColorChanged">
+                <ColorPicker.Palette>
+                    <colorPicker:SemiColorLightPalette />
+                </ColorPicker.Palette>
+            </ColorPicker>
+            <ToggleButton Content="网格" Click="ShowGird_OnClick" Margin="5 0" />
+        </StackPanel>
+        <ScottPlot:AvaPlot Name="plot" Grid.Row="1" Grid.Column="0" />
+        <ItemsControl Name="MaxItems" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" Margin="-5 30 0 0"/>
+        <ItemsControl Name="MinItems" Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom" Margin="-5 0 0 40"/>
     </Grid>
 </Window>

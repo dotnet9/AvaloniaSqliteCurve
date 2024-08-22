@@ -28,6 +28,7 @@
     <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc2" />
     <PackageReference Include="ScottPlot.Avalonia" Version="5.0.37" />
     <PackageReference Include="Semi.Avalonia" Version="11.1.0.2" />
+    <PackageReference Include="Semi.Avalonia.ColorPicker" Version="11.1.0.2" />
     <PackageReference Include="Semi.Avalonia.DataGrid" Version="11.1.0.2" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.118" />
   </ItemGroup>

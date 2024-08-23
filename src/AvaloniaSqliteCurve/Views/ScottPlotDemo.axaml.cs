@@ -1,10 +1,10 @@
-using AvaloniaSqliteCurve.Models;
-using System;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using AvaloniaSqliteCurve.Extensions;
+using AvaloniaSqliteCurve.Models;
+using System;
+using ScottPlot;
 
 namespace AvaloniaSqliteCurve.Views;
 
@@ -57,7 +57,7 @@ public partial class ScottPlotDemo : Window
         var dt = DateTime.Now.AddMilliseconds(_addCount * 500);
         for (var i = 0; i < LineCount; i++)
         {
-            _lines![i].Update(dt, Random.Shared.Next(-500, 500));
+            _lines![i].Update(dt, Random.Shared.Next(-50000, 50000));
         }
 
         plot.Plot.Axes.AutoScale();
@@ -75,6 +75,11 @@ public partial class ScottPlotDemo : Window
         plot.Plot.Legend.IsVisible = true;
         plot.Plot.Axes.DateTimeTicksBottom();
         plot.Plot.DataBackground.Color = ScottPlot.Colors.LightCyan;
+
+        foreach (var linePattern in Enum.GetValues<LinePattern>())
+        {
+            ComboBoxGridLineType.Items.Add(linePattern);
+        }
 
         _lines = new LiveLineModel[LineCount];
         var start = DateTime.Now;
@@ -115,5 +120,16 @@ public partial class ScottPlotDemo : Window
     private void ShowGird_OnClick(object? sender, RoutedEventArgs e)
     {
         plot.Plot.Grid.IsVisible = !plot.Plot.Grid.IsVisible;
+    }
+
+    private void ComboBoxGridLineType_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (ComboBoxGridLineType.SelectionBoxItem is LinePattern pattern)
+        {
+            plot.Plot.Grid.XAxisStyle.MajorLineStyle.Pattern = pattern;
+            plot.Plot.Grid.XAxisStyle.MinorLineStyle.Pattern = pattern;
+            plot.Plot.Grid.YAxisStyle.MajorLineStyle.Pattern = pattern;
+            plot.Plot.Grid.YAxisStyle.MinorLineStyle.Pattern = pattern;
+        }
     }
 }

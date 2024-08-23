@@ -30,6 +30,8 @@
                 </ColorPicker.Palette>
             </ColorPicker>
             <ToggleButton Content="网格" Click="ShowGird_OnClick" Margin="5 0" />
+            <TextBlock Text="风格线型" VerticalAlignment="Center"/>
+            <ComboBox VerticalAlignment="Center" Name="ComboBoxGridLineType" SelectionChanged="ComboBoxGridLineType_OnSelectionChanged"/>
         </StackPanel>
         <lvc:CartesianChart Grid.Row="1" 
                             Name="LvCharts" EasingFunction="{x:Null}"

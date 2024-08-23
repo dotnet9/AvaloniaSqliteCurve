@@ -6,6 +6,10 @@ using Avalonia.Skia;
 using AvaloniaSqliteCurve.ViewModels;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
+using ScottPlot;
+using SkiaSharp;
+using System;
+using LiveChartsCore.SkiaSharpView.Painting.Effects;
 
 namespace AvaloniaSqliteCurve.Views;
 
@@ -15,15 +19,19 @@ public partial class LiveCharts2Demo : Window
     {
         InitializeComponent();
 
-        LvCharts.DrawMarginFrame = new DrawMarginFrame()
+
+        foreach (var linePattern in Enum.GetValues<LinePattern>())
         {
-            Fill = new SolidColorPaint(_fill.ToSKColor())
-        };
+            ComboBoxGridLineType.Items.Add(linePattern);
+        }
+
+        UpdateStyle();
     }
 
     private Avalonia.Media.Color _fill = Avalonia.Media.Colors.Black;
     private Avalonia.Media.Color _stroke = Avalonia.Media.Colors.White;
     private float _lineWidth = 1;
+    private LinePattern _linePattern = LinePattern.Solid;
 
     private void SaveChartsToImage_OnClick(object? sender, RoutedEventArgs e)
     {
@@ -63,15 +71,37 @@ public partial class LiveCharts2Demo : Window
         UpdateStyle();
     }
 
+    private void ComboBoxGridLineType_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (ComboBoxGridLineType.SelectionBoxItem is LinePattern pattern)
+        {
+            _linePattern = pattern;
+        }
+        UpdateStyle();
+    }
+
     private void UpdateStyle()
     {
-        var newFrame = new DrawMarginFrame();
+        LvCharts.DrawMarginFrame = new DrawMarginFrame
+        {
+            Fill = new SolidColorPaint(_fill.ToSKColor())
+        };
+        if (DataContext is not LiveCharts2DemoViewModel vm) return;
 
-        newFrame.Fill = new SolidColorPaint(_fill.ToSKColor());
-        (this.DataContext as LiveCharts2DemoViewModel).XAxes[0].SeparatorsPaint =
-            (this.DataContext as LiveCharts2DemoViewModel).YAxes[0].SeparatorsPaint =
-            new SolidColorPaint(_stroke.ToSKColor(), _lineWidth);
+        var effect = _linePattern switch
+        {
+            LinePattern.Solid => null,
+            LinePattern.Dashed => new DashEffect([10f, 10f]),
+            LinePattern.DenselyDashed => new DashEffect([6f, 6f]),
+            _ => new DashEffect([3f, 5f])
+        };
 
-        LvCharts.DrawMarginFrame = newFrame;
+        vm.XAxes[0].SeparatorsPaint =
+            vm.YAxes[0].SeparatorsPaint = new SolidColorPaint
+            {
+                Color = _stroke.ToSKColor(),
+                StrokeThickness = _lineWidth,
+                PathEffect = effect
+            };
     }
 }

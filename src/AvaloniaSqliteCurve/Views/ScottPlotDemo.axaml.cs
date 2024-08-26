@@ -1,18 +1,13 @@
 using Avalonia.Controls;
-using Avalonia.Interactivity;
 using Avalonia.Media;
 using AvaloniaSqliteCurve.Extensions;
-using AvaloniaSqliteCurve.Models;
 using ScottPlot;
 using ScottPlot.Plottables;
 using ScottPlot.TickGenerators;
-using SharpCompress;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Timers;
-using CodeWF.Tools.Extensions;
-using ScottPlot.AxisRules;
+using Color = Avalonia.Media.Color;
 
 namespace AvaloniaSqliteCurve.Views;
 
@@ -45,48 +40,10 @@ public partial class ScottPlotDemo : Window
         plot.Plot.Axes.Title.Label.FontName = PlotFont;
         plot.Plot.Axes.Title.IsVisible = true;
 
-
-        // 背景色
-        BackgroundColorPicker.Color = Avalonia.Media.Colors.Black;
-        GridColorPicker.Color = Avalonia.Media.Colors.White;
-
-        // 风格色
-
-        // 网络线类型
-        foreach (var linePattern in Enum.GetValues<LinePattern>())
-        {
-            ComboBoxGridLineType.Items.Add(linePattern);
-        }
-
-        ComboBoxGridLineType.SelectedItem = LinePattern.Solid;
-
-        // X轴显示时间范围
-        var kinds = Enum.GetValues<DisplayTimeRangeKind>();
-        foreach (var kind in kinds)
-        {
-            ComboBoxDisplayTimeRange.Items.Add(new ComboBoxItem()
-                { Content = kind.GetDescription(), Tag = (int)kind });
-        }
-
-        ComboBoxDisplayTimeRange.SelectedIndex = 0;
-
-        // 添加X、Y等分
-        Enumerable.Range(1, 7).ForEach(index =>
-        {
-            ComboBoxXDivide.Items.Add(index);
-            ComboBoxYDivide.Items.Add(index);
-        });
-        ComboBoxXDivide.SelectedItem = 5;
-        ComboBoxYDivide.SelectedItem = 5;
-
-        // 添加曲线及上下限
-        var start = DateTime.Now;
-        for (var i = 0; i < LineCount; i++)
-        {
-            //AddLimit(Random.Shared.Next(-100, 100), Random.Shared.Next(300, 600), _lines[i].Scatter!.Color);
-        }
-
         // 生成曲线
+        plot.Interaction.Disable();
+        plot.Plot.Axes.ContinuouslyAutoscale = false;
+        plot.Plot.Axes.SetLimits(0, DisplayMaxPointsCount, MinBottom, MaxTop);
         for (var i = 0; i < LineCount; i++)
         {
             var streamer = plot.Plot.Add.DataStreamer(DisplayMaxPointsCount);
@@ -95,15 +52,16 @@ public partial class ScottPlotDemo : Window
             _streamers.Add(streamer);
         }
 
-        plot.Interaction.Disable();
-        plot.Plot.Axes.ContinuouslyAutoscale = false;
-        plot.Plot.Axes.SetLimits(0, DisplayMaxPointsCount, MinBottom, MaxTop);
-
         _addNewDataTimer.Elapsed += AddNewDataHandler;
         _updateDataTimer.Elapsed += UpdateDataHandler;
 
         _addNewDataTimer.Start();
         _updateDataTimer.Start();
+
+        SettingView_OnBackgroundColorChanged(MySettingView.BackgroundColorPicker.Color);
+        SettingView_OnGridLineColorChanged(MySettingView.GridColorPicker.Color);
+        SettingView_OnXDivideChanged(5);
+        SettingView_OnYDivideChanged(5);
     }
 
     private void AddNewDataHandler(object? sender, ElapsedEventArgs e)
@@ -147,63 +105,44 @@ public partial class ScottPlotDemo : Window
         });
     }
 
-    /// <summary>
-    /// 修改背景色
-    /// </summary>
-    private void ChangeBackgroundColor_OnColorChanged(object? sender, ColorChangedEventArgs e)
+    // 修改背景色
+    private void SettingView_OnBackgroundColorChanged(Color color)
     {
-        var selectedColor = BackgroundColorPicker.Color;
-        plot.Plot.DataBackground.Color = selectedColor.ToScottPlotColor();
+        plot.Plot.DataBackground.Color = color.ToScottPlotColor();
     }
 
-    /// <summary>
-    /// 修改线色
-    /// </summary>
-    private void GridColorPicker_OnColorChanged(object? sender, ColorChangedEventArgs e)
+    // 修改表格线颜色
+    private void SettingView_OnGridLineColorChanged(Color color)
     {
-        var selectedColor = GridColorPicker.Color;
-        plot.Plot.Grid.MajorLineColor = plot.Plot.Grid.MinorLineColor = selectedColor.ToScottPlotColor();
+        plot.Plot.Grid.MajorLineColor = plot.Plot.Grid.MinorLineColor = color.ToScottPlotColor();
     }
 
-    /// <summary>
-    /// 是否显示线框
-    /// </summary>
-    private void ShowGird_OnClick(object? sender, RoutedEventArgs e)
+    // 修改表格线可见性
+    private void SettingView_OnGridLineVisibleChanged(bool visible)
     {
-        plot.Plot.Grid.IsVisible = !plot.Plot.Grid.IsVisible;
+        plot.Plot.Grid.IsVisible = visible;
     }
 
-    /// <summary>
-    /// 修改线类型
-    /// </summary>
-    private void ComboBoxGridLineType_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    // 修改表格线类型
+    private void SettingView_OnGridLineLinePatternChanged(LinePattern pattern)
     {
-        if (ComboBoxGridLineType.SelectionBoxItem is LinePattern pattern)
-        {
-            plot.Plot.Grid.XAxisStyle.MajorLineStyle.Pattern = pattern;
-            plot.Plot.Grid.XAxisStyle.MinorLineStyle.Pattern = pattern;
-            plot.Plot.Grid.YAxisStyle.MajorLineStyle.Pattern = pattern;
-            plot.Plot.Grid.YAxisStyle.MinorLineStyle.Pattern = pattern;
-        }
+        plot.Plot.Grid.XAxisStyle.MajorLineStyle.Pattern = pattern;
+        plot.Plot.Grid.XAxisStyle.MinorLineStyle.Pattern = pattern;
+        plot.Plot.Grid.YAxisStyle.MajorLineStyle.Pattern = pattern;
+        plot.Plot.Grid.YAxisStyle.MinorLineStyle.Pattern = pattern;
     }
 
-    /// <summary>
-    /// 修改X等分
-    /// </summary>
-    private void ComboBoxXDivide_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    // 修改X等分
+    private void SettingView_OnXDivideChanged(int divide)
     {
-        if (((ComboBox)sender!).SelectedItem is not int selectedItem) return;
-        _xDivide = selectedItem;
+        _xDivide = divide;
         ChangeXDivide();
     }
 
-    /// <summary>
-    /// 修改Y等分
-    /// </summary>
-    private void ComboBoxYDivide_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    // 修改Y等分
+    private void SettingView_OnYDivideChanged(int divide)
     {
-        if (((ComboBox)sender!).SelectedItem is not int selectedItem) return;
-        _yDivide = selectedItem;
+        _yDivide = divide;
 
         const double range = MaxTop - MinBottom;
         var valueRangeOfOnePart = range / _yDivide;
@@ -219,11 +158,10 @@ public partial class ScottPlotDemo : Window
         plot.Plot.Axes.Left.TickGenerator = ticks;
     }
 
-    private void DisplayTimeRange_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    // 修改X轴显示时间范围
+    private void SettingView_OnXDisplayTimeRangeChanged(int displayMinuteRange)
     {
-        if (((ComboBox)sender!).SelectedItem is not ComboBoxItem selectedItem) return;
-
-        _displayMinuteRange = int.Parse(selectedItem.Tag!.ToString()!);
+        _displayMinuteRange = displayMinuteRange;
         ChangeXDivide();
     }
 

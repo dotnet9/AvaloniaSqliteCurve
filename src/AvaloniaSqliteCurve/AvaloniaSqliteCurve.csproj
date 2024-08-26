@@ -22,7 +22,6 @@
     <PackageReference Include="Avalonia.ReactiveUI" Version="11.2.0-beta1" />
     <PackageReference Include="CodeWF.EventBus" Version="3.4.4.2" />
     <PackageReference Include="CodeWF.Tools" Version="1.2.0" />
-    <PackageReference Include="Dapper" Version="2.1.35" />
     <PackageReference Include="Irihi.Ursa" Version="1.1.0" />
     <PackageReference Include="Irihi.Ursa.Themes.Semi" Version="1.1.0" />
     <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc2" />
@@ -30,6 +29,12 @@
     <PackageReference Include="Semi.Avalonia" Version="11.1.0.2" />
     <PackageReference Include="Semi.Avalonia.ColorPicker" Version="11.1.0.2" />
     <PackageReference Include="Semi.Avalonia.DataGrid" Version="11.1.0.2" />
-    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.118" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Compile Update="Views\ScottPlotDemo.axaml.cs">
+      <DependentUpon>ScottPlotDemo.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

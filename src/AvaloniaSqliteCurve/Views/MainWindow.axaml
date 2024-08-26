@@ -21,6 +21,5 @@
     <StackPanel>
         <Button Content="LiveCharts2" Command="{Binding ExecuteShowLiveCharts2DemoHandler}" />
         <Button Content="ScottPlot" Command="{Binding ExecuteShowScottPlotDemoHandler}" />
-        <Button Content="ScottPlot BigData" Command="{Binding ExecuteShowScottPlotBigDataHandler}" />
     </StackPanel>
 </Window>

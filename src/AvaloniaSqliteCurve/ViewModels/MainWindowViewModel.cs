@@ -13,9 +13,4 @@ public class MainWindowViewModel : ViewModelBase
     {
         new ScottPlotDemo().Show();
     }
-
-    public void ExecuteShowScottPlotBigDataHandler()
-    {
-        new ScottPlotBigData().Show();
-    }
 }

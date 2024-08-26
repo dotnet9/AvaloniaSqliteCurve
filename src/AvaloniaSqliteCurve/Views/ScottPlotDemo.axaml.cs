@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using AvaloniaSqliteCurve.Extensions;
+using AvaloniaSqliteCurve.Models;
 using ScottPlot;
 using ScottPlot.Plottables;
 using ScottPlot.TickGenerators;
@@ -10,6 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
+using CodeWF.Tools.Extensions;
+using ScottPlot.AxisRules;
 
 namespace AvaloniaSqliteCurve.Views;
 
@@ -18,6 +21,8 @@ public partial class ScottPlotDemo : Window
     private static readonly string PlotFont = "Noto Sans TC";
     private const int LineCount = 16;
     private const int DisplayMaxPointsCount = 1000;
+    private const double MinBottom = -300.0;
+    private const double MaxTop = 300.0;
     private readonly Timer _addNewDataTimer = new(TimeSpan.FromMilliseconds(10));
     private readonly Timer _updateDataTimer = new(TimeSpan.FromMilliseconds(50));
 
@@ -56,15 +61,13 @@ public partial class ScottPlotDemo : Window
         ComboBoxGridLineType.SelectedItem = LinePattern.Solid;
 
         // X轴显示时间范围
-        ComboBoxDisplayTimeRange.Items.Add(new ComboBoxItem() { Content = "5分钟", Tag = 5 });
-        ComboBoxDisplayTimeRange.Items.Add(new ComboBoxItem() { Content = "10分钟", Tag = 10 });
-        ComboBoxDisplayTimeRange.Items.Add(new ComboBoxItem() { Content = "30分钟", Tag = 30 });
-        ComboBoxDisplayTimeRange.Items.Add(new ComboBoxItem() { Content = "1小时", Tag = 60 });
-        ComboBoxDisplayTimeRange.Items.Add(new ComboBoxItem() { Content = "2小时", Tag = 120 });
-        ComboBoxDisplayTimeRange.Items.Add(new ComboBoxItem() { Content = "4小时", Tag = 240 });
-        ComboBoxDisplayTimeRange.Items.Add(new ComboBoxItem() { Content = "8小时", Tag = 480 });
-        ComboBoxDisplayTimeRange.Items.Add(new ComboBoxItem() { Content = "1天", Tag = 1440 });
-        ComboBoxDisplayTimeRange.Items.Add(new ComboBoxItem() { Content = "2天", Tag = 2880 });
+        var kinds = Enum.GetValues<DisplayTimeRangeKind>();
+        foreach (var kind in kinds)
+        {
+            ComboBoxDisplayTimeRange.Items.Add(new ComboBoxItem()
+                { Content = kind.GetDescription(), Tag = (int)kind });
+        }
+
         ComboBoxDisplayTimeRange.SelectedIndex = 0;
 
         // 添加X、Y等分
@@ -87,13 +90,14 @@ public partial class ScottPlotDemo : Window
         for (var i = 0; i < LineCount; i++)
         {
             var streamer = plot.Plot.Add.DataStreamer(DisplayMaxPointsCount);
+            streamer.ManageAxisLimits = false;
             streamer.ViewScrollLeft();
             _streamers.Add(streamer);
         }
 
         plot.Interaction.Disable();
-        plot.Plot.Axes.SetLimitsY(bottom: -50, top: 50);
-        plot.Plot.Axes.SetLimitsX(left: 1000, right: 0);
+        plot.Plot.Axes.ContinuouslyAutoscale = false;
+        plot.Plot.Axes.SetLimits(0, DisplayMaxPointsCount, MinBottom, MaxTop);
 
         _addNewDataTimer.Elapsed += AddNewDataHandler;
         _updateDataTimer.Elapsed += UpdateDataHandler;
@@ -106,7 +110,14 @@ public partial class ScottPlotDemo : Window
     {
         for (var i = 0; i < LineCount; i++)
         {
-            _streamers[i].Add(Random.Shared.Next(-100, 300));
+            if (DateTime.Now.Millisecond % 5 == 1)
+            {
+                _streamers[i].Add(Random.Shared.Next(-1000, 1000));
+            }
+            else
+            {
+                _streamers[i].Add(Random.Shared.Next(-50, 200));
+            }
         }
     }
 
@@ -191,6 +202,21 @@ public partial class ScottPlotDemo : Window
     /// </summary>
     private void ComboBoxYDivide_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
+        if (((ComboBox)sender!).SelectedItem is not int selectedItem) return;
+        _yDivide = selectedItem;
+
+        const double range = MaxTop - MinBottom;
+        var valueRangeOfOnePart = range / _yDivide;
+
+        NumericManual ticks = new();
+        for (var i = 0; i <= _yDivide; i++)
+        {
+            var position = MinBottom + valueRangeOfOnePart * i;
+            var label = $"{position:F2}";
+            ticks.AddMajor(position, label);
+        }
+
+        plot.Plot.Axes.Left.TickGenerator = ticks;
     }
 
     private void DisplayTimeRange_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
@@ -206,14 +232,15 @@ public partial class ScottPlotDemo : Window
         NumericManual ticks = new();
         var pointCountForOnePart = DisplayMaxPointsCount * 1.0 / _xDivide;
         var minutesForOnePart = _displayMinuteRange * 1.0 / _xDivide;
-        for (int i = 0; i <= _xDivide; i++)
+        for (var i = 0; i <= _xDivide; i++)
         {
             var minutesIndex = minutesForOnePart * i;
             var pointCountIndex = DisplayMaxPointsCount - i * pointCountForOnePart;
             if (i == 0)
             {
                 ticks.AddMajor(pointCountIndex,
-                    XYLableExtensions.GetTimeStr(minutesIndex, _displayMinuteRange) + " " + XYLableExtensions.GetTimeUnit(_displayMinuteRange));
+                    XYLableExtensions.GetTimeStr(minutesIndex, _displayMinuteRange) + " " +
+                    XYLableExtensions.GetTimeUnit(_displayMinuteRange));
             }
             else
             {
@@ -223,6 +250,4 @@ public partial class ScottPlotDemo : Window
 
         plot.Plot.Axes.Bottom.TickGenerator = ticks;
     }
-
-    
 }

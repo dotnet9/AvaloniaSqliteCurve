@@ -151,7 +151,7 @@ public partial class ScottPlotDemo : Window
         for (var i = 0; i <= _yDivide; i++)
         {
             var position = MinBottom + valueRangeOfOnePart * i;
-            var label = $"{position:F2}";
+            var label = string.Empty;//$"{position:F2}";
             ticks.AddMajor(position, label);
         }
 

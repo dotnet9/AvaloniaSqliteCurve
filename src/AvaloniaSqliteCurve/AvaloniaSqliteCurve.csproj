@@ -28,11 +28,4 @@
     <PackageReference Include="Semi.Avalonia.ColorPicker" Version="11.1.0.2" />
     <PackageReference Include="Semi.Avalonia.DataGrid" Version="11.1.0.2" />
   </ItemGroup>
-
-
-  <ItemGroup>
-    <Compile Update="Views\ScottPlotDemo.axaml.cs">
-      <DependentUpon>ScottPlotDemo.axaml</DependentUpon>
-    </Compile>
-  </ItemGroup>
 </Project>

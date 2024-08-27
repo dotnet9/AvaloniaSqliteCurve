@@ -4,6 +4,7 @@ using AvaloniaSqliteCurve.Extensions;
 using AvaloniaSqliteCurve.Models;
 using ScottPlot;
 using System;
+using Avalonia.Controls.Primitives;
 
 namespace AvaloniaSqliteCurve.Views;
 
@@ -20,9 +21,9 @@ public partial class SettingView : UserControl
     public SettingView()
     {
         InitializeComponent();
-        
-        BackgroundColorPicker.Color = Avalonia.Media.Colors.Black;// 背景色
-        GridColorPicker.Color = Avalonia.Media.Colors.White;// 网格色
+
+        BackgroundColorPicker.Color = Avalonia.Media.Colors.Black; // 背景色
+        GridColorPicker.Color = Avalonia.Media.Colors.White; // 网格色
 
         // 网络线类型
         foreach (var linePattern in Enum.GetValues<LinePattern>())
@@ -48,8 +49,15 @@ public partial class SettingView : UserControl
             ComboBoxXDivide.Items.Add(index);
             ComboBoxYDivide.Items.Add(index);
         }
+
         ComboBoxXDivide.SelectedItem = 5;
         ComboBoxYDivide.SelectedItem = 5;
+    }
+
+    public bool IsTimeRangeVisible
+    {
+        get => ComboBoxDisplayTimeRange.IsVisible;
+        set => ComboBoxDisplayTimeRange.IsVisible = TxtTimeRange.IsVisible = value;
     }
 
     /// <summary>
@@ -75,7 +83,7 @@ public partial class SettingView : UserControl
     /// </summary>
     private void ShowGird_OnClick(object? sender, RoutedEventArgs e)
     {
-        GridLineVisibleChanged?.Invoke(((ToggleSplitButton)sender!).IsChecked);
+        GridLineVisibleChanged?.Invoke(((ToggleButton)sender!).IsChecked!.Value);
     }
 
     /// <summary>

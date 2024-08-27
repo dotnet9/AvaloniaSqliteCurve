@@ -1,37 +1,43 @@
+using System;
+using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
 using Avalonia.Skia;
+using AvaloniaSqliteCurve.Extensions;
 using AvaloniaSqliteCurve.ViewModels;
+using DynamicData;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
-using ScottPlot;
-using SkiaSharp;
-using System;
 using LiveChartsCore.SkiaSharpView.Painting.Effects;
+using ScottPlot;
+using ScottPlot.TickGenerators;
+using Color = Avalonia.Media.Color;
 
 namespace AvaloniaSqliteCurve.Views;
 
 public partial class LiveCharts2Demo : Window
 {
-    public LiveCharts2Demo()
-    {
-        InitializeComponent();
-
-
-        foreach (var linePattern in Enum.GetValues<LinePattern>())
-        {
-            ComboBoxGridLineType.Items.Add(linePattern);
-        }
-
-        UpdateStyle();
-    }
-
     private Avalonia.Media.Color _fill = Avalonia.Media.Colors.Black;
     private Avalonia.Media.Color _stroke = Avalonia.Media.Colors.White;
     private float _lineWidth = 1;
     private LinePattern _linePattern = LinePattern.Solid;
+
+    public LiveCharts2Demo()
+    {
+        InitializeComponent();
+
+        this.MySettingView.IsTimeRangeVisible = false;
+
+        UpdateStyle();
+
+        MySettingView_OnBackgroundColorChanged(MySettingView.BackgroundColorPicker.Color);
+        MySettingView_OnGridLineColorChanged(MySettingView.GridColorPicker.Color);
+        MySettingView_OnXDivideChanged(5);
+        MySettingView_OnYDivideChanged(5);
+    }
+
 
     private void SaveChartsToImage_OnClick(object? sender, RoutedEventArgs e)
     {
@@ -53,31 +59,59 @@ public partial class LiveCharts2Demo : Window
         }
     }
 
-    private void ChangeBackgroundColor_OnColorChanged(object? sender, ColorChangedEventArgs e)
+    private void MySettingView_OnBackgroundColorChanged(Color color)
     {
-        _fill = BackgroundColorPicker.Color;
+        _fill = color;
         UpdateStyle();
     }
 
-    private void GridColorPicker_OnColorChanged(object? sender, ColorChangedEventArgs e)
+    private void MySettingView_OnGridLineColorChanged(Color color)
     {
-        _stroke = GridColorPicker.Color;
+        _stroke = color;
         UpdateStyle();
     }
 
-    private void ShowGird_OnClick(object? sender, RoutedEventArgs e)
+    private void MySettingView_OnGridLineVisibleChanged(bool visible)
     {
-        _lineWidth = _lineWidth > 0.01f ? 0.01f : 1f;
+        _lineWidth = visible ? 1f : 0.01f;
         UpdateStyle();
     }
 
-    private void ComboBoxGridLineType_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    private void MySettingView_OnGridLineLinePatternChanged(LinePattern pattern)
     {
-        if (ComboBoxGridLineType.SelectionBoxItem is LinePattern pattern)
+        _linePattern = pattern;
+        UpdateStyle();
+    }
+
+    private void MySettingView_OnXDivideChanged(int divide)
+    {
+        if (DataContext is not LiveCharts2DemoViewModel vm)
+            return;
+
+        var totalMilliseconds = (vm.EndDateTime - vm.StartDateTime).TotalMilliseconds;
+        var divideMilliseconds = totalMilliseconds / divide;
+        var ts = new TimeSpan(0, 0, 0, 0, (int)divideMilliseconds);
+        vm.XAxes =
+        [
+            new DateTimeAxis(ts, date => $"{date:HH:mm}:00"),
+        ];
+    }
+
+    private void MySettingView_OnYDivideChanged(int divide)
+    {
+        if (DataContext is not LiveCharts2DemoViewModel vm)
+            return;
+
+        const double valueRange = LiveCharts2DemoViewModel.MaxTop - LiveCharts2DemoViewModel.MinBottom;
+        var divideValue = valueRange / divide;
+        var separators = new List<double>();
+        for (var i = 0; i <= divide; i++)
         {
-            _linePattern = pattern;
+            var currentValue = LiveCharts2DemoViewModel.MinBottom + i * divideValue;
+            separators.Add((int)currentValue);
         }
-        UpdateStyle();
+
+        vm.YAxes[0].CustomSeparators = separators;
     }
 
     private void UpdateStyle()

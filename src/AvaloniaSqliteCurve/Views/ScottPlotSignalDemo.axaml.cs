@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Media;
 using AvaloniaSqliteCurve.Extensions;
+using AvaloniaSqliteCurve.Models;
 using ScottPlot;
 using ScottPlot.Plottables;
 using ScottPlot.TickGenerators;
@@ -11,28 +12,25 @@ using Color = Avalonia.Media.Color;
 
 namespace AvaloniaSqliteCurve.Views;
 
-public partial class ScottPlotDemo : Window
+public partial class ScottPlotSignalDemo : Window
 {
     private static readonly string PlotFont = "Noto Sans TC";
-    private const int LineCount = 16;
-    private const int DisplayMaxPointsCount = 1000;
-    private const double MinBottom = -300.0;
-    private const double MaxTop = 300.0;
-    private readonly Timer _addNewDataTimer = new(TimeSpan.FromMilliseconds(10));
-    private readonly Timer _updateDataTimer = new(TimeSpan.FromMilliseconds(50));
+    private int _nextValueIndex = ConstData.DisplayMaxPointsCount - 1;
+    private readonly Timer _addNewDataTimer = new(TimeSpan.FromMilliseconds(ConstData.AddDataInterval));
+    private readonly Timer _updateDataTimer = new(TimeSpan.FromMilliseconds(ConstData.UpdateDataInterval));
 
     private int _displayMinuteRange = 5;
     private int _xDivide = 5;
     private int _yDivide = 5;
 
-    private readonly List<DataStreamer> _streamers = new();
+    private readonly List<double[]> _signals = new();
 
-    static ScottPlotDemo()
+    static ScottPlotSignalDemo()
     {
         PlotFont = ScottPlot.Fonts.Detect("实时曲线测试");
     }
 
-    public ScottPlotDemo()
+    public ScottPlotSignalDemo()
     {
         InitializeComponent();
 
@@ -43,13 +41,15 @@ public partial class ScottPlotDemo : Window
         // 生成曲线
         plot.Interaction.Disable();
         plot.Plot.Axes.ContinuouslyAutoscale = false;
-        plot.Plot.Axes.SetLimits(0, DisplayMaxPointsCount, MinBottom, MaxTop);
-        for (var i = 0; i < LineCount; i++)
+        plot.Plot.Axes.SetLimits(0, ConstData.DisplayMaxPointsCount, ConstData.MinBottom, ConstData.MaxTop);
+        for (var i = 0; i < ConstData.LineCount; i++)
         {
-            var streamer = plot.Plot.Add.DataStreamer(DisplayMaxPointsCount);
-            streamer.ManageAxisLimits = false;
-            streamer.ViewScrollLeft();
-            _streamers.Add(streamer);
+            var data = new double[ConstData.DisplayMaxPointsCount];
+            _signals.Add(data);
+            var logger = plot.Plot.Add.Signal(data);
+            //logger.ManageAxisLimits = false;
+            //logger.ViewSlide();
+            //_signals.Add(logger);
         }
 
         _addNewDataTimer.Elapsed += AddNewDataHandler;
@@ -66,25 +66,31 @@ public partial class ScottPlotDemo : Window
 
     private void AddNewDataHandler(object? sender, ElapsedEventArgs e)
     {
-        for (var i = 0; i < LineCount; i++)
+        for (var i = 0; i < ConstData.LineCount; i++)
         {
+            double newValue;
             if (DateTime.Now.Millisecond % 5 == 1)
             {
-                _streamers[i].Add(Random.Shared.Next(-1000, 1000));
+                newValue = Random.Shared.Next(-1000, 1000);
             }
             else
             {
-                _streamers[i].Add(Random.Shared.Next(-50, 200));
+                newValue = Random.Shared.Next(-50, 200);
             }
+
+            Buffer.BlockCopy(_signals[i], 1, _signals[i], 0, ConstData.DisplayMaxPointsCount - 1);
+            if (_nextValueIndex < 0)
+            {
+                _nextValueIndex = ConstData.DisplayMaxPointsCount - 1;
+            }
+            _signals[i][_nextValueIndex] = newValue;
+            _nextValueIndex--;
         }
     }
 
     private void UpdateDataHandler(object? sender, ElapsedEventArgs e)
     {
-        if (_streamers.Count > 0 && _streamers[0].HasNewData)
-        {
-            plot.Refresh();
-        }
+        plot.Refresh();
     }
 
     /// <summary>
@@ -144,14 +150,14 @@ public partial class ScottPlotDemo : Window
     {
         _yDivide = divide;
 
-        const double range = MaxTop - MinBottom;
+        const double range = ConstData.MaxTop - ConstData.MinBottom;
         var valueRangeOfOnePart = range / _yDivide;
 
         NumericManual ticks = new();
         for (var i = 0; i <= _yDivide; i++)
         {
-            var position = MinBottom + valueRangeOfOnePart * i;
-            var label = string.Empty;//$"{position:F2}";
+            var position = ConstData.MinBottom + valueRangeOfOnePart * i;
+            var label = string.Empty; //$"{position:F2}";
             ticks.AddMajor(position, label);
         }
 
@@ -168,12 +174,12 @@ public partial class ScottPlotDemo : Window
     private void ChangeXDivide()
     {
         NumericManual ticks = new();
-        var pointCountForOnePart = DisplayMaxPointsCount * 1.0 / _xDivide;
+        var pointCountForOnePart = ConstData.DisplayMaxPointsCount * 1.0 / _xDivide;
         var minutesForOnePart = _displayMinuteRange * 1.0 / _xDivide;
         for (var i = 0; i <= _xDivide; i++)
         {
             var minutesIndex = minutesForOnePart * i;
-            var pointCountIndex = DisplayMaxPointsCount - i * pointCountForOnePart;
+            var pointCountIndex = ConstData.DisplayMaxPointsCount - i * pointCountForOnePart;
             if (i == 0)
             {
                 ticks.AddMajor(pointCountIndex,

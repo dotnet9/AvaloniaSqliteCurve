@@ -1,18 +1,15 @@
-using System;
-using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
 using Avalonia.Skia;
-using AvaloniaSqliteCurve.Extensions;
 using AvaloniaSqliteCurve.ViewModels;
-using DynamicData;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.Painting.Effects;
 using ScottPlot;
-using ScottPlot.TickGenerators;
+using System;
+using System.Collections.Generic;
 using Color = Avalonia.Media.Color;
 
 namespace AvaloniaSqliteCurve.Views;

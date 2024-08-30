@@ -9,8 +9,18 @@ public class MainWindowViewModel : ViewModelBase
         new LiveCharts2Demo() { DataContext = new LiveCharts2DemoViewModel() }.Show();
     }
 
-    public void ExecuteShowScottPlotDemoHandler()
+    public void ExecuteShowScottPlotDataLoggerHandler()
     {
-        new ScottPlotDemo().Show();
+        new ScottPlotDataLoggerDemo().Show();
+    }
+
+    public void ExecuteShowScottPlotDataStreamerHandler()
+    {
+        new ScottPlotDataStreamerDemo().Show();
+    }
+
+    public void ExecuteShowScottPlotSignalHandler()
+    {
+        new ScottPlotSignalDemo().Show();
     }
 }

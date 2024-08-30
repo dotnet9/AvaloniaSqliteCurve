@@ -20,6 +20,8 @@
     </Window.Styles>
     <StackPanel>
         <Button Content="LiveCharts2" Command="{Binding ExecuteShowLiveCharts2DemoHandler}" />
-        <Button Content="ScottPlot" Command="{Binding ExecuteShowScottPlotDemoHandler}" />
+        <Button Content="ScottPlot DataLogger" Command="{Binding ExecuteShowScottPlotDataLoggerHandler}" />
+        <Button Content="ScottPlot DataStreamer" Command="{Binding ExecuteShowScottPlotDataStreamerHandler}" />
+        <Button Content="ScottPlot Signal" Command="{Binding ExecuteShowScottPlotSignalHandler}" />
     </StackPanel>
 </Window>

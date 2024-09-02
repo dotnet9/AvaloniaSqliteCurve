@@ -4,7 +4,7 @@ using System.Collections.Specialized;
 
 namespace AvaloniaSqliteCurve.Extensions;
 
-public class RangeObservableCollectionT<T> : ObservableCollection<T>
+public class RangeObservableCollection<T> : ObservableCollection<T>
 {
     private bool SuppressNotificaction { get; set; }
 

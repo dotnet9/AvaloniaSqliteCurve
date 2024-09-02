@@ -20,7 +20,7 @@ namespace AvaloniaSqliteCurve.ViewModels
         public const double MinBottom = -300.0;
         public const double MaxTop = 300.0;
         private const int LineCount = 16;
-        private readonly Dictionary<int, RangeObservableCollectionT<DateTimePoint?>> _values = new();
+        private readonly Dictionary<int, RangeObservableCollection<DateTimePoint?>> _values = new();
 
         public ObservableCollection<ISeries> Series { get; } = new();
 
@@ -107,7 +107,7 @@ namespace AvaloniaSqliteCurve.ViewModels
             {
                 for (var i = 0; i < LineCount; i++)
                 {
-                    var seriesValues = new RangeObservableCollectionT<DateTimePoint?>();
+                    var seriesValues = new RangeObservableCollection<DateTimePoint?>();
                     _values[i] = seriesValues;
                     Series.Add(new LineSeries<DateTimePoint?>
                     {

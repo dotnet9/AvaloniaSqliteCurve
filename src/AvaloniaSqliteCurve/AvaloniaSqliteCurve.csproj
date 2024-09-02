@@ -24,8 +24,8 @@
     <PackageReference Include="Irihi.Ursa.Themes.Semi" Version="1.2.0" />
     <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc2" />
     <PackageReference Include="ScottPlot.Avalonia" Version="5.0.37" />
-    <PackageReference Include="Semi.Avalonia" Version="11.1.0.2" />
-    <PackageReference Include="Semi.Avalonia.ColorPicker" Version="11.1.0.2" />
-    <PackageReference Include="Semi.Avalonia.DataGrid" Version="11.1.0.2" />
+    <PackageReference Include="Semi.Avalonia" Version="11.2.0-beta1" />
+    <PackageReference Include="Semi.Avalonia.ColorPicker" Version="11.1.0.3" />
+    <PackageReference Include="Semi.Avalonia.DataGrid" Version="11.1.0.3" />
   </ItemGroup>
 </Project>

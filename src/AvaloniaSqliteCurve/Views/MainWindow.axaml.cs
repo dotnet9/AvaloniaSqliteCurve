@@ -14,4 +14,18 @@ public partial class MainWindow : Window
     {
         AvaloniaXamlLoader.Load(this);
     }
+
+    private void SelectingItemsControl_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        var ctl = sender as ComboBox;
+        var chartsView = this.FindControl<ChartsViews>("MyChartsView");
+        if (ctl?.SelectedIndex == 0)
+        {
+            chartsView?.SwitchToSingleView();
+        }
+        else
+        {
+            chartsView?.SwitchToQuadView();
+        }
+    }
 }

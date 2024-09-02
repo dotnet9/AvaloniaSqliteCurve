@@ -3,6 +3,7 @@
         xmlns:vm="using:AvaloniaSqliteCurve.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="clr-namespace:AvaloniaSqliteCurve.Views"
         mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="250"
         Width="300" Height="250"
         x:Class="AvaloniaSqliteCurve.Views.MainWindow"
@@ -18,10 +19,18 @@
             <Setter Property="Margin" Value="10" />
         </Style>
     </Window.Styles>
-    <StackPanel>
-        <Button Content="LiveCharts2" Command="{Binding ExecuteShowLiveCharts2DemoHandler}" />
-        <Button Content="ScottPlot DataLogger" Command="{Binding ExecuteShowScottPlotDataLoggerHandler}" />
-        <Button Content="ScottPlot DataStreamer" Command="{Binding ExecuteShowScottPlotDataStreamerHandler}" />
-        <Button Content="ScottPlot Signal" Command="{Binding ExecuteShowScottPlotSignalHandler}" />
-    </StackPanel>
+    <Grid RowDefinitions="50 *">
+        <StackPanel Orientation="Horizontal">
+            <ComboBox SelectionChanged="SelectingItemsControl_OnSelectionChanged">
+                <ComboBoxItem Content="单一窗口" />
+                <ComboBoxItem Content="4分窗口" />
+            </ComboBox>
+            <Button Content="LiveCharts2" Command="{Binding ExecuteShowLiveCharts2DemoHandler}" />
+            <Button Content="ScottPlot DataLogger" Command="{Binding ExecuteShowScottPlotDataLoggerHandler}" />
+            <Button Content="ScottPlot DataStreamer" Command="{Binding ExecuteShowScottPlotDataStreamerHandler}" />
+            <Button Content="ScottPlot Signal" Command="{Binding ExecuteShowScottPlotSignalHandler}" />
+        </StackPanel>
+
+        <views:ChartsViews x:Name="MyChartsView" Grid.Row="1" />
+    </Grid>
 </Window>

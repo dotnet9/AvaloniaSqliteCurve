@@ -4,8 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="clr-namespace:AvaloniaSqliteCurve.Views"
-        mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="250"
-        Width="300" Height="250"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+        Width="800" Height="600"
         x:Class="AvaloniaSqliteCurve.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico" Padding="20"
@@ -21,7 +21,7 @@
     </Window.Styles>
     <Grid RowDefinitions="50 *">
         <StackPanel Orientation="Horizontal">
-            <ComboBox SelectionChanged="SelectingItemsControl_OnSelectionChanged">
+            <ComboBox SelectionChanged="SelectingItemsControl_OnSelectionChanged" VerticalAlignment="Center">
                 <ComboBoxItem Content="单一窗口" />
                 <ComboBoxItem Content="4分窗口" />
             </ComboBox>
@@ -29,6 +29,7 @@
             <Button Content="ScottPlot DataLogger" Command="{Binding ExecuteShowScottPlotDataLoggerHandler}" />
             <Button Content="ScottPlot DataStreamer" Command="{Binding ExecuteShowScottPlotDataStreamerHandler}" />
             <Button Content="ScottPlot Signal" Command="{Binding ExecuteShowScottPlotSignalHandler}" />
+            <Button Content="数值窗口" Command="{Binding ShowDataViewHandler}" />
         </StackPanel>
 
         <views:ChartsViews x:Name="MyChartsView" Grid.Row="1" />

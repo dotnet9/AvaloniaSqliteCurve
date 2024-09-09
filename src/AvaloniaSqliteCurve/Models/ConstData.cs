@@ -9,4 +9,8 @@ public class ConstData
 
     public const int AddDataInterval = 100;
     public const int UpdateDataInterval = 1000;
+
+
+    public static Avalonia.Media.Color Fill = Avalonia.Media.Colors.White;
+    public static Avalonia.Media.Color Stroke = Avalonia.Media.Colors.Black;
 }

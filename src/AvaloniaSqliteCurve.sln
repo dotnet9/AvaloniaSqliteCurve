@@ -5,6 +5,10 @@ VisualStudioVersion = 17.11.35005.142
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvaloniaSqliteCurve", "AvaloniaSqliteCurve\AvaloniaSqliteCurve.csproj", "{12BE4959-F584-479C-A6F0-09716E068A3A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject1", "TestProject1\TestProject1.csproj", "{48BE2AEC-83A0-4F86-BCE9-454C0B1B4B12}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{92208994-C4BF-44CA-9C15-766D2343088C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{12BE4959-F584-479C-A6F0-09716E068A3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12BE4959-F584-479C-A6F0-09716E068A3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12BE4959-F584-479C-A6F0-09716E068A3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48BE2AEC-83A0-4F86-BCE9-454C0B1B4B12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48BE2AEC-83A0-4F86-BCE9-454C0B1B4B12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48BE2AEC-83A0-4F86-BCE9-454C0B1B4B12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48BE2AEC-83A0-4F86-BCE9-454C0B1B4B12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92208994-C4BF-44CA-9C15-766D2343088C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92208994-C4BF-44CA-9C15-766D2343088C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92208994-C4BF-44CA-9C15-766D2343088C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92208994-C4BF-44CA-9C15-766D2343088C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
 using Avalonia.Skia;
+using AvaloniaSqliteCurve.Models;
 using AvaloniaSqliteCurve.ViewModels;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
@@ -16,8 +17,8 @@ namespace AvaloniaSqliteCurve.Views;
 
 public partial class LiveCharts2Demo : Window
 {
-    private Avalonia.Media.Color _fill = Avalonia.Media.Colors.Black;
-    private Avalonia.Media.Color _stroke = Avalonia.Media.Colors.White;
+    private Avalonia.Media.Color _fill = ConstData.Fill;
+    private Avalonia.Media.Color _stroke = ConstData.Stroke;
     private float _lineWidth = 1;
     private LinePattern _linePattern = LinePattern.Solid;
 
@@ -115,7 +116,8 @@ public partial class LiveCharts2Demo : Window
     {
         LvCharts.DrawMarginFrame = new DrawMarginFrame
         {
-            Fill = new SolidColorPaint(_fill.ToSKColor())
+            Fill = new SolidColorPaint(_fill.ToSKColor()),
+            Stroke = new SolidColorPaint(_stroke.ToSKColor())
         };
         if (DataContext is not LiveCharts2DemoViewModel vm) return;
 

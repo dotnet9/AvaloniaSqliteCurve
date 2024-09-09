@@ -22,8 +22,8 @@ public partial class SettingView : UserControl
     {
         InitializeComponent();
 
-        BackgroundColorPicker.Color = Avalonia.Media.Colors.Black; // 背景色
-        GridColorPicker.Color = Avalonia.Media.Colors.White; // 网格色
+        BackgroundColorPicker.Color = ConstData.Fill; // 背景色
+        GridColorPicker.Color = ConstData.Stroke; // 网格色
 
         // 网络线类型
         foreach (var linePattern in Enum.GetValues<LinePattern>())

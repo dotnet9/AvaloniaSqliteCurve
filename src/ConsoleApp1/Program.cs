@@ -22,13 +22,14 @@ var testDoubleDatas = new List<TestDoubleValue>
     new(0.00001, "1e-05", "1e-05", "1e-05"),
     new(0.00012, "0.0001", "1.2e-04", "1.2e-04"),
     new(0.00123, "0.0012", "0.001", "1.23e-03"),
-    new(0.01234, "0.0123", "0.012", "0.01")
+    new(0.01234, "0.0123", "0.012", "0.01"),
+    new(0.0000123456789, "1.2346e-05", "1.235e-05", "1.23e-05")
 };
 
 foreach (var data in testIntDatas)
 {
     Console.WriteLine(
-        $"{data.Value.FormatNumber(FormatType.None)}, {data.Value.FormatNumber(FormatType.NineFour)}, {data.Value.FormatNumber(FormatType.EightThree)}, {data.Value.FormatNumber(FormatType.SevenTwo)}");
+        $"{data.Value.Format(FormatType.None)}, {data.Value.Format(FormatType.NineFour)}, {data.Value.Format(FormatType.EightThree)}, {data.Value.Format(FormatType.SevenTwo)}");
 }
 
 foreach (var data in testDoubleDatas)

@@ -30,15 +30,16 @@ public class UnitTest1
             new(0.00001, "1e-05", "1e-05", "1e-05"),
             new(0.00012, "0.0001", "1.2e-04", "1.2e-04"),
             new(0.00123, "0.0012", "0.001", "1.23e-03"),
-            new(0.01234, "0.0123", "0.012", "0.01")
+            new(0.01234, "0.0123", "0.012", "0.01"),
+            new(0.0000123456789, "1.2346e-05", "1.235e-05", "1.23e-05")
         };
 
         foreach (var data in testIntDatas)
         {
-            Assert.AreEqual(data.Value.ToString(), data.Value.FormatNumber(FormatType.None));
-            Assert.AreEqual(data.NineFourFormat, data.Value.FormatNumber(FormatType.NineFour));
-            Assert.AreEqual(data.EightThreeFormat, data.Value.FormatNumber(FormatType.EightThree));
-            Assert.AreEqual(data.SevenTwoFormat, data.Value.FormatNumber(FormatType.SevenTwo));
+            Assert.AreEqual(data.Value.ToString(), data.Value.Format(FormatType.None));
+            Assert.AreEqual(data.NineFourFormat, data.Value.Format(FormatType.NineFour));
+            Assert.AreEqual(data.EightThreeFormat, data.Value.Format(FormatType.EightThree));
+            Assert.AreEqual(data.SevenTwoFormat, data.Value.Format(FormatType.SevenTwo));
         }
 
         foreach (var data in testDoubleDatas)

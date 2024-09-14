@@ -6,6 +6,7 @@ var testIntDatas = new List<TestIntValue>
 };
 var testDoubleDatas = new List<TestDoubleValue>
 {
+    new(0, "12345.12", "12345.12", "12345.12"),
     new(12345.12, "12345.12", "12345.12", "12345.12"),
     new(12345.123, "12345.123", "12345.123", "12345.12"),
     new(12345.1234, "12345.1234", "12345.123", "12345.12"),

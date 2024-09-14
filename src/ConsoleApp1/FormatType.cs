@@ -19,19 +19,19 @@ public static class FormatTypeExtension
             FormatType.NineFour => absValue switch
             {
                 > 99999 => value.ToString("#####.####e+00"),
-                < 0.0001 => value.ToString("0.####e+00"),
+                < 0.0001 when absValue != 0 => value.ToString("0.####e+00"),
                 _ => value.ToString("####0.####")
             },
-            FormatType.EightThree => Math.Abs(value) switch
+            FormatType.EightThree => absValue switch
             {
                 > 99999 => value.ToString("#####.###e+00"),
-                < 0.001 => value.ToString("0.###e+00"),
+                < 0.001 when absValue != 0 => value.ToString("0.###e+00"),
                 _ => value.ToString("####0.###")
             },
-            FormatType.SevenTwo => Math.Abs(value) switch
+            FormatType.SevenTwo => absValue switch
             {
                 > 99999 => value.ToString("#####.##e+00"),
-                < 0.01 => value.ToString("0.##e+00"),
+                < 0.01 when absValue != 0 => value.ToString("0.##e+00"),
                 _ => value.ToString("####0.##")
             },
             _ => value.ToString("#################0.#################")

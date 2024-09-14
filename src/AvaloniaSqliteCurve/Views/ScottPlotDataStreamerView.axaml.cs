@@ -44,6 +44,8 @@ public partial class ScottPlotDataStreamerView : UserControl
         for (var i = 0; i < ConstData.LineCount; i++)
         {
             var streamer = plot.Plot.Add.DataStreamer(ConstData.DisplayMaxPointsCount);
+            streamer.LineWidth = 1;
+            
             streamer.ManageAxisLimits = false;
             streamer.ViewScrollLeft();
             _streamers.Add(streamer);

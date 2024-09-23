@@ -2,10 +2,12 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:log="https://codewf.com"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="AvaloniaSqliteCurve.Views.PointDataView"
         Title="动态表格示例">
-	<Grid>
+	<Grid RowDefinitions="* 200">
         <DataGrid Name="PointDataGrid" />
+        <log:LogView Grid.Row="1" />
     </Grid>
 </Window>

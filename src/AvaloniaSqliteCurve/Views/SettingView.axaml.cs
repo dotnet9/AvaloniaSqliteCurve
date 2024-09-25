@@ -17,6 +17,7 @@ public partial class SettingView : UserControl
     public event Action<int>? XDisplayTimeRangeChanged;
     public event Action<int>? XDivideChanged;
     public event Action<int>? YDivideChanged;
+    public event Action<double, double>? YRangeChanged;
 
     public SettingView()
     {
@@ -125,5 +126,22 @@ public partial class SettingView : UserControl
     {
         if (((ComboBox)sender!).SelectedItem is not int selectedItem) return;
         YDivideChanged?.Invoke(selectedItem);
+    }
+
+    private void MinY_OnTextChanged(object? sender, TextChangedEventArgs e)
+    {
+        ChangeYRange();
+    }
+
+    private void MaxY_OnTextChanged(object? sender, TextChangedEventArgs e)
+    {
+        ChangeYRange();
+    }
+
+    private void ChangeYRange()
+    {
+        double.TryParse(this.FindControl<TextBox>("MinY").Text, out var minValue);
+        double.TryParse(this.FindControl<TextBox>("MaxY").Text, out var maxValue);
+        YRangeChanged?.Invoke(minValue, maxValue);
     }
 }

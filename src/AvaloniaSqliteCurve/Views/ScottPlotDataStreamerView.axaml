@@ -14,7 +14,8 @@
                            GridLineLinePatternChanged="SettingView_OnGridLineLinePatternChanged"
                            XDisplayTimeRangeChanged="SettingView_OnXDisplayTimeRangeChanged"
                            XDivideChanged="SettingView_OnXDivideChanged"
-                           YDivideChanged="SettingView_OnYDivideChanged"/>
+                           YDivideChanged="SettingView_OnYDivideChanged"
+                           YRangeChanged="MySettingView_OnYRangeChanged"/>
         <ScottPlot:AvaPlot Name="plot" Grid.Row="1" Grid.Column="0" Margin="0 0 20 0" />
         <ItemsControl Name="MaxItems" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" Margin="-5 30 0 0" />
         <ItemsControl Name="MinItems" Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom" Margin="-5 0 0 40" />

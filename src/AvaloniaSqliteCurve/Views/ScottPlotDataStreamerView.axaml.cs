@@ -21,6 +21,8 @@ public partial class ScottPlotDataStreamerView : UserControl
     private int _displayMinuteRange = 5;
     private int _xDivide = 5;
     private int _yDivide = 5;
+    private double _yMin = ConstData.MinBottom;
+    private double _yMax = ConstData.MaxTop;
 
     private readonly List<DataStreamer> _streamers = new();
 
@@ -45,7 +47,6 @@ public partial class ScottPlotDataStreamerView : UserControl
         {
             var streamer = plot.Plot.Add.DataStreamer(ConstData.DisplayMaxPointsCount);
             streamer.LineWidth = 1;
-            
             streamer.ManageAxisLimits = false;
             streamer.ViewScrollLeft();
             _streamers.Add(streamer);
@@ -142,15 +143,36 @@ public partial class ScottPlotDataStreamerView : UserControl
     private void SettingView_OnYDivideChanged(int divide)
     {
         _yDivide = divide;
+        ChangeYRange();
+    }
 
-        const double range = ConstData.MaxTop - ConstData.MinBottom;
+    /// <summary>
+    /// 修改Y轴上下限
+    /// </summary>
+    /// <param name="min"></param>
+    /// <param name="max"></param>
+    /// <exception cref="NotImplementedException"></exception>
+    private void MySettingView_OnYRangeChanged(double min, double max)
+    {
+        _yMin = min;
+        _yMax = max;
+        ChangeYRange();
+    }
+
+    private void ChangeYRange()
+    {
+        var range = _yMax - _yMin;
         var valueRangeOfOnePart = range / _yDivide;
+
+        // 设置Y轴上显示范围
+        plot.Plot.Axes.Left.Min = _yMin;
+        plot.Plot.Axes.Left.Max = _yMax;
 
         NumericManual ticks = new();
         for (var i = 0; i <= _yDivide; i++)
         {
-            var position = ConstData.MinBottom + valueRangeOfOnePart * i;
-            var label = string.Empty;//$"{position:F2}";
+            var position = _yMin + valueRangeOfOnePart * i;
+            var label = $"{position:F2}";
             ticks.AddMajor(position, label);
         }
 
@@ -187,4 +209,5 @@ public partial class ScottPlotDataStreamerView : UserControl
 
         plot.Plot.Axes.Bottom.TickGenerator = ticks;
     }
+
 }

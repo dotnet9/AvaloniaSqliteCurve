@@ -32,5 +32,9 @@
         <TextBlock Text="Y等分" VerticalAlignment="Center" />
         <ComboBox VerticalAlignment="Center" Name="ComboBoxYDivide" Margin="5 0"
                   SelectionChanged="ComboBoxYDivide_OnSelectionChanged" />
+        <TextBlock Text="Y最小值：" />
+        <TextBox x:Name="MinY" Width="50" Text="-300" TextChanged="MinY_OnTextChanged" />
+        <TextBlock Text="Y最大值：" />
+        <TextBox x:Name="MaxY" Width="50" Text="300" TextChanged="MaxY_OnTextChanged" />
     </StackPanel>
 </UserControl>

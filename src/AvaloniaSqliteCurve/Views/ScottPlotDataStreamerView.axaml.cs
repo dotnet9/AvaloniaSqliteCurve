@@ -42,11 +42,10 @@ public partial class ScottPlotDataStreamerView : UserControl
         // Éú³ÉÇúÏß
         plot.Interaction.Disable();
         plot.Plot.Axes.ContinuouslyAutoscale = false;
-        plot.Plot.Axes.SetLimits(0, ConstData.DisplayMaxPointsCount, ConstData.MinBottom, ConstData.MaxTop);
         for (var i = 0; i < ConstData.LineCount; i++)
         {
             var streamer = plot.Plot.Add.DataStreamer(ConstData.DisplayMaxPointsCount);
-            streamer.LineWidth = 1;
+            streamer.LineWidth = 2;
             streamer.ManageAxisLimits = false;
             streamer.ViewScrollLeft();
             _streamers.Add(streamer);
@@ -191,6 +190,8 @@ public partial class ScottPlotDataStreamerView : UserControl
         NumericManual ticks = new();
         var pointCountForOnePart = ConstData.DisplayMaxPointsCount * 1.0 / _xDivide;
         var minutesForOnePart = _displayMinuteRange * 1.0 / _xDivide;
+        plot.Plot.Axes.Bottom.Min = 0;
+        plot.Plot.Axes.Bottom.Max = ConstData.DisplayMaxPointsCount;
         for (var i = 0; i <= _xDivide; i++)
         {
             var minutesIndex = minutesForOnePart * i;

@@ -21,6 +21,10 @@ public partial class LiveCharts2Demo : Window
     private Avalonia.Media.Color _stroke = ConstData.Stroke;
     private float _lineWidth = 1;
     private LinePattern _linePattern = LinePattern.Solid;
+    private int _xDivide = 5;
+    private int _yDivide = 5;
+    private double _minY = ConstData.MinBottom;
+    private double _maxY = ConstData.MaxTop;
 
     public LiveCharts2Demo()
     {
@@ -83,32 +87,52 @@ public partial class LiveCharts2Demo : Window
 
     private void MySettingView_OnXDivideChanged(int divide)
     {
+        _xDivide = divide;
         if (DataContext is not LiveCharts2DemoViewModel vm)
             return;
 
-        var totalMilliseconds = (vm.EndDateTime - vm.StartDateTime).TotalMilliseconds;
-        var divideMilliseconds = totalMilliseconds / divide;
-        var ts = new TimeSpan(0, 0, 0, 0, (int)divideMilliseconds);
-        vm.XAxes =
-        [
-            new DateTimeAxis(ts, date => $"{date:HH:mm}:00"),
-        ];
+        var startTicks = vm.StartDateTime.Ticks;
+        var valueRange = (vm.EndDateTime - vm.StartDateTime).Ticks;
+        var divideValue = valueRange / _xDivide;
+        var separators = new List<double>();
+        for (var i = 0; i <= _xDivide; i++)
+        {
+            var currentValue = startTicks + i * divideValue;
+            separators.Add(currentValue);
+        }
+
+        vm.XAxes[0].CustomSeparators = separators;
     }
 
     private void MySettingView_OnYDivideChanged(int divide)
     {
+        _yDivide = divide;
+        UpdateYDivide();
+    }
+
+    private void MySettingView_OnYRangeChanged(double min, double max)
+    {
+        _minY = min;
+        _maxY = max;
+        UpdateYDivide();
+    }
+
+    private void UpdateYDivide()
+    {
         if (DataContext is not LiveCharts2DemoViewModel vm)
             return;
 
-        const double valueRange = LiveCharts2DemoViewModel.MaxTop - LiveCharts2DemoViewModel.MinBottom;
-        var divideValue = valueRange / divide;
+        var valueRange = _maxY - _minY;
+        var divideValue = valueRange / _yDivide;
         var separators = new List<double>();
-        for (var i = 0; i <= divide; i++)
+        for (var i = 0; i <= _yDivide; i++)
         {
-            var currentValue = LiveCharts2DemoViewModel.MinBottom + i * divideValue;
+            var currentValue = _minY + i * divideValue;
             separators.Add((int)currentValue);
         }
 
+        vm.YAxes[0].MinLimit = _minY;
+        vm.YAxes[0].MaxLimit = _maxY;
         vm.YAxes[0].CustomSeparators = separators;
     }
 

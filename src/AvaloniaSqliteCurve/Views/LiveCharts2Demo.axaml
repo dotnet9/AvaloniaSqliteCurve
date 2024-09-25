@@ -29,7 +29,8 @@
                                GridLineVisibleChanged="MySettingView_OnGridLineVisibleChanged"
                                GridLineLinePatternChanged="MySettingView_OnGridLineLinePatternChanged"
                                XDivideChanged="MySettingView_OnXDivideChanged"
-                               YDivideChanged="MySettingView_OnYDivideChanged"/>
+                               YDivideChanged="MySettingView_OnYDivideChanged"
+                               YRangeChanged="MySettingView_OnYRangeChanged"/>
         </StackPanel>
         <lvc:CartesianChart Grid.Row="1"
                             Name="LvCharts" EasingFunction="{x:Null}"

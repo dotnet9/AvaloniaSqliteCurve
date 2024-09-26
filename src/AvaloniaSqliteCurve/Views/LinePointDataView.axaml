@@ -1,0 +1,55 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:AvaloniaSqliteCurve.ViewModels"
+             x:DataType="vm:LinePointDataViewModel"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="AvaloniaSqliteCurve.Views.LinePointDataView">
+  <UserControl.Styles>
+      <Style Selector="DataGridRow">
+          <Setter Property="Height" Value="21" />
+          <Setter Property="FontSize" Value="12" />
+      </Style>
+  </UserControl.Styles>
+    <DataGrid x:Name="PointDataGrid" ItemsSource="{CompiledBinding Points}">
+        <DataGrid.Columns>
+            <DataGridTextColumn Width="50" Header="编号" Binding="{CompiledBinding Id}" />
+            <DataGridTextColumn Width="120" Header="实时值" Binding="{CompiledBinding Value}" />
+            <DataGridTextColumn Width="120" Header="游标值" Binding="{CompiledBinding CursorValue}" />
+            <DataGridTemplateColumn Width="60">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <CheckBox IsChecked="{CompiledBinding Visible,Mode=TwoWay}" />
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            <DataGridTemplateColumn Width="100" Header="颜色">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <ColorPicker ColorSpectrumShape="Ring" 
+                                     Color="{CompiledBinding LineColor}" />
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            <DataGridTemplateColumn Width="100" Header="线宽">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <ComboBox ItemsSource="{CompiledBinding #PointDataGrid.((vm:LinePointDataViewModel)DataContext).LineWidths}"
+                                  SelectedItem="{CompiledBinding LineWidth}"></ComboBox>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+			<DataGridTextColumn Width="120" Header="下限值" Binding="{CompiledBinding Min}" />
+			<DataGridTextColumn Width="120" Header="上限值" Binding="{CompiledBinding Max}" />
+            <DataGridTemplateColumn Width="100" Header="窗口">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <ComboBox ItemsSource="{CompiledBinding #PointDataGrid.((vm:LinePointDataViewModel)DataContext).DisplayWindowNames}"
+                                  SelectedIndex="{CompiledBinding WindowIndex}"></ComboBox>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+        </DataGrid.Columns>
+    </DataGrid>
+</UserControl>

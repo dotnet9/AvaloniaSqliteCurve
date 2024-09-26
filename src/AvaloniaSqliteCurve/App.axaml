@@ -15,4 +15,30 @@
         <StyleInclude Source="avares://Semi.Avalonia.DataGrid/Index.axaml" />
         <StyleInclude Source="avares://Semi.Avalonia.ColorPicker/Index.axaml" />
     </Application.Styles>
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="Styles/Light.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <FontWeight x:Key="ButtonDefaultFontWeight">500</FontWeight>
+            <FontWeight x:Key="CalendarItemCalendarButtonSelectedFontWeight">500</FontWeight>
+            <FontWeight x:Key="ExpanderHeaderFontWeight">500</FontWeight>
+            <FontWeight x:Key="ListBoxItemRadioGroupButtonFontWeight">500</FontWeight>
+            <FontWeight x:Key="ProgressBarTextFontWeight">500</FontWeight>
+            <FontWeight x:Key="RadioButtonButtonFontWeight">500</FontWeight>
+            <FontWeight x:Key="TabItemSelectedFontWeight">500</FontWeight>
+            <FontWeight x:Key="TextBlockTitleFontWeight">500</FontWeight>
+            <FontWeight x:Key="ToggleButtonDefaultFontWeight">500</FontWeight>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="WindowDefaultBackground" Color="#404263" />
+                    <SolidColorBrush x:Key="WindowDefaultForeground" Color="#FFFFFF" />
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="WindowDefaultBackground" Color="#FFE6E8EA" />
+                    <SolidColorBrush x:Key="WindowDefaultForeground" Color="#3c525f" />
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
 </Application>

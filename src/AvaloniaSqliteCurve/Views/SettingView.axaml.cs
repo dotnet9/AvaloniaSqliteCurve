@@ -1,10 +1,10 @@
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
-using AvaloniaSqliteCurve.Extensions;
 using AvaloniaSqliteCurve.Models;
+using CodeWF.Tools.Extensions;
 using ScottPlot;
 using System;
-using Avalonia.Controls.Primitives;
 
 namespace AvaloniaSqliteCurve.Views;
 

@@ -6,7 +6,7 @@
              xmlns:views="clr-namespace:AvaloniaSqliteCurve.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="AvaloniaSqliteCurve.Views.ScottPlotDataStreamerView">
-	<Grid RowDefinitions="Auto, *" ColumnDefinitions="*, Auto" Margin="10">
+	<Grid RowDefinitions="Auto, *, 150" ColumnDefinitions="*, Auto" Margin="10">
         <views:SettingView Name="MySettingView"
                            BackgroundColorChanged="SettingView_OnBackgroundColorChanged"
                            GridLineColorChanged="SettingView_OnGridLineColorChanged"
@@ -19,5 +19,7 @@
         <ScottPlot:AvaPlot Name="plot" Grid.Row="1" Grid.Column="0" Margin="0 0 20 0" />
         <ItemsControl Name="MaxItems" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" Margin="-5 30 0 0" />
         <ItemsControl Name="MinItems" Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom" Margin="-5 0 0 40" />
+
+        <views:LinePointDataView Name="PointListView" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" />
     </Grid>
 </UserControl>

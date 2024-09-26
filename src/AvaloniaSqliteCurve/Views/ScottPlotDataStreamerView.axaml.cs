@@ -8,6 +8,7 @@ using ScottPlot.TickGenerators;
 using System;
 using System.Collections.Generic;
 using System.Timers;
+using ReactiveUI;
 using Color = Avalonia.Media.Color;
 
 namespace AvaloniaSqliteCurve.Views;
@@ -24,7 +25,7 @@ public partial class ScottPlotDataStreamerView : UserControl
     private double _yMin = ConstData.MinBottom;
     private double _yMax = ConstData.MaxTop;
 
-    private readonly List<DataStreamer> _streamers = new();
+    private readonly Dictionary<int, DataStreamer> _streamers = new();
 
     static ScottPlotDataStreamerView()
     {
@@ -39,17 +40,22 @@ public partial class ScottPlotDataStreamerView : UserControl
         plot.Plot.Axes.Title.Label.FontName = PlotFont;
         plot.Plot.Axes.Title.IsVisible = true;
 
+        foreach (var point in PointListView.ViewModel.Points)
+        {
+            point.WhenAnyValue(p => p.Visible).Subscribe(_ => Update());
+            point.WhenAnyValue(p => p.LineColor).Subscribe(_ => Update());
+            point.WhenAnyValue(p => p.LineWidth).Subscribe(_ => Update());
+            point.WhenAnyValue(p => p.Min).Subscribe(_ => Update());
+            point.WhenAnyValue(p => p.Max).Subscribe(_ => Update());
+            point.WhenAnyValue(p => p.WindowIndex).Subscribe(_ => Update());
+        }
+
+        notUpdate = false;
+
         // 生成曲线
         plot.Interaction.Disable();
         plot.Plot.Axes.ContinuouslyAutoscale = false;
-        for (var i = 0; i < ConstData.LineCount; i++)
-        {
-            var streamer = plot.Plot.Add.DataStreamer(ConstData.DisplayMaxPointsCount);
-            streamer.LineWidth = 2;
-            streamer.ManageAxisLimits = false;
-            streamer.ViewScrollLeft();
-            _streamers.Add(streamer);
-        }
+        CreateCharts();
 
         _addNewDataTimer.Elapsed += AddNewDataHandler;
         _updateDataTimer.Elapsed += UpdateDataHandler;
@@ -86,6 +92,33 @@ public partial class ScottPlotDataStreamerView : UserControl
         }
     }
 
+    private bool notUpdate = true;
+
+    private void Update()
+    {
+        if (notUpdate)
+        {
+            return;
+        }
+        CreateCharts();
+    }
+
+    private void CreateCharts()
+    {
+        plot.Plot.Clear();
+        _streamers.Clear();
+        for (var i = 0; i < ConstData.LineCount; i++)
+        {
+            var point = PointListView.ViewModel!.Points[i];
+            var streamer = plot.Plot.Add.DataStreamer(ConstData.DisplayMaxPointsCount);
+            streamer.Color = point.LineColor.Value.ToScottPlotColor();
+            streamer.LineWidth = point.LineWidth;
+            streamer.ManageAxisLimits = false;
+            streamer.ViewScrollLeft();
+            _streamers[i] = streamer;
+        }
+    }
+
     /// <summary>
     /// 添加上下限标签
     /// </summary>
@@ -107,6 +140,7 @@ public partial class ScottPlotDataStreamerView : UserControl
     // 修改背景色
     private void SettingView_OnBackgroundColorChanged(Color color)
     {
+        plot.Plot.FigureBackground.Color = Color.FromRgb(230, 232, 234).ToScottPlotColor();
         plot.Plot.DataBackground.Color = color.ToScottPlotColor();
     }
 
@@ -210,5 +244,4 @@ public partial class ScottPlotDataStreamerView : UserControl
 
         plot.Plot.Axes.Bottom.TickGenerator = ticks;
     }
-
 }

@@ -23,8 +23,6 @@ public partial class LiveCharts2Demo : Window
     private LinePattern _linePattern = LinePattern.Solid;
     private int _xDivide = 5;
     private int _yDivide = 5;
-    private double _minY = ConstData.MinBottom;
-    private double _maxY = ConstData.MaxTop;
 
     public LiveCharts2Demo()
     {
@@ -112,8 +110,6 @@ public partial class LiveCharts2Demo : Window
 
     private void MySettingView_OnYRangeChanged(double min, double max)
     {
-        _minY = min;
-        _maxY = max;
         UpdateYDivide();
     }
 
@@ -122,17 +118,17 @@ public partial class LiveCharts2Demo : Window
         if (DataContext is not LiveCharts2DemoViewModel vm)
             return;
 
-        var valueRange = _maxY - _minY;
+        var valueRange = ConstData.MaxTop - ConstData.MinBottom;
         var divideValue = valueRange / _yDivide;
         var separators = new List<double>();
         for (var i = 0; i <= _yDivide; i++)
         {
-            var currentValue = _minY + i * divideValue;
+            var currentValue = ConstData.MinBottom + i * divideValue;
             separators.Add((int)currentValue);
         }
 
-        vm.YAxes[0].MinLimit = _minY;
-        vm.YAxes[0].MaxLimit = _maxY;
+        vm.YAxes[0].MinLimit = ConstData.MinBottom;
+        vm.YAxes[0].MaxLimit = ConstData.MaxTop;
         vm.YAxes[0].CustomSeparators = separators;
     }
 

@@ -19,8 +19,8 @@ public class LinePointDataViewModel : ViewModelBase
             Visible = true,
             LineColor = GetBrushFromResource(index),
             LineWidth = 2,
-            Min = -100,
-            Max = 100,
+            Min = -10 * (index + 1),
+            Max = 10 * (index + 1),
             WindowIndex = (int)DisplayWindows.First
         }).ToList();
     }

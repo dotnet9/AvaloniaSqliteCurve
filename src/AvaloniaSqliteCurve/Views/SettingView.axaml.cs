@@ -144,4 +144,9 @@ public partial class SettingView : UserControl
         double.TryParse(this.FindControl<TextBox>("MaxY").Text, out var maxValue);
         YRangeChanged?.Invoke(minValue, maxValue);
     }
+
+    private void Button_OnClick(object? sender, RoutedEventArgs e)
+    {
+        new ColorsView().Show();
+    }
 }

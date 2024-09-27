@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Timers;
 using ReactiveUI;
+using ScottPlot.AxisPanels;
 using Color = Avalonia.Media.Color;
 
 namespace AvaloniaSqliteCurve.Views;
@@ -22,10 +23,9 @@ public partial class ScottPlotDataStreamerView : UserControl
     private int _displayMinuteRange = 5;
     private int _xDivide = 5;
     private int _yDivide = 5;
-    private double _yMin = ConstData.MinBottom;
-    private double _yMax = ConstData.MaxTop;
 
     private readonly Dictionary<int, DataStreamer> _streamers = new();
+    private readonly Dictionary<int, RightAxis> _rightAxes = new();
 
     static ScottPlotDataStreamerView()
     {
@@ -39,6 +39,7 @@ public partial class ScottPlotDataStreamerView : UserControl
         plot.Plot.Axes.Title.Label.Text = "实时数据";
         plot.Plot.Axes.Title.Label.FontName = PlotFont;
         plot.Plot.Axes.Title.IsVisible = true;
+        
 
         foreach (var point in PointListView.ViewModel.Points)
         {
@@ -65,8 +66,8 @@ public partial class ScottPlotDataStreamerView : UserControl
 
         SettingView_OnBackgroundColorChanged(MySettingView.BackgroundColorPicker.Color);
         SettingView_OnGridLineColorChanged(MySettingView.GridColorPicker.Color);
-        SettingView_OnXDivideChanged(5);
-        SettingView_OnYDivideChanged(5);
+        SettingView_OnXDivideChanged(_xDivide);
+        SettingView_OnYDivideChanged(_yDivide);
     }
 
     private void AddNewDataHandler(object? sender, ElapsedEventArgs e)
@@ -117,6 +118,8 @@ public partial class ScottPlotDataStreamerView : UserControl
             streamer.ViewScrollLeft();
             _streamers[i] = streamer;
         }
+        //plot.Plot.Axes.Left.IsVisible = false;
+        plot.Plot.Axes.Right.IsVisible = true;
     }
 
     /// <summary>
@@ -187,29 +190,36 @@ public partial class ScottPlotDataStreamerView : UserControl
     /// <exception cref="NotImplementedException"></exception>
     private void MySettingView_OnYRangeChanged(double min, double max)
     {
-        _yMin = min;
-        _yMax = max;
         ChangeYRange();
     }
 
     private void ChangeYRange()
     {
-        var range = _yMax - _yMin;
+        // 1、只显示右侧Y轴
+        DivideOneRight();
+
+        // 每条线一个Y轴
+        //EveryLineY();
+    }
+
+    private void DivideOneRight()
+    {
+        var range = ConstData.MaxTop - ConstData.MinBottom;
         var valueRangeOfOnePart = range / _yDivide;
 
         // 设置Y轴上显示范围
-        plot.Plot.Axes.Left.Min = _yMin;
-        plot.Plot.Axes.Left.Max = _yMax;
+        plot.Plot.Axes.Left.Min = plot.Plot.Axes.Right.Min = ConstData.MinBottom;
+        plot.Plot.Axes.Left.Max = plot.Plot.Axes.Right.Max = ConstData.MaxTop;
 
         NumericManual ticks = new();
         for (var i = 0; i <= _yDivide; i++)
         {
-            var position = _yMin + valueRangeOfOnePart * i;
-            var label = $"{position:F2}";
-            ticks.AddMajor(position, label);
+            var position = ConstData.MinBottom + valueRangeOfOnePart * i;
+            ticks.AddMajor(position, string.Empty);
         }
 
-        plot.Plot.Axes.Left.TickGenerator = ticks;
+        plot.Plot.Axes.Left.TickGenerator =
+        plot.Plot.Axes.Right.TickGenerator = ticks;
     }
 
     // 修改X轴显示时间范围

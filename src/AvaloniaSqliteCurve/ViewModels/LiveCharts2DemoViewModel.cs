@@ -26,7 +26,7 @@ namespace AvaloniaSqliteCurve.ViewModels
 
         private Axis[] _axis =
         [
-            new DateTimeAxis(TimeSpan.FromMinutes(1), date => $"{date:HH:mm}:00"),
+            new DateTimeAxis(TimeSpan.FromMinutes(1), date => $"{date:yyyy:MM:dd HH:mm}:00"),
         ];
 
         public Axis[] XAxes
@@ -40,6 +40,7 @@ namespace AvaloniaSqliteCurve.ViewModels
             new Axis
             {
                 NamePadding = new LiveChartsCore.Drawing.Padding(0, 15),
+                IsVisible = false,
                 Labeler = Labelers.Default,
                 LabelsPaint = new SolidColorPaint
                 {

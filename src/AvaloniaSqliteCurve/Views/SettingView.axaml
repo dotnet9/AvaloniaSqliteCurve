@@ -6,6 +6,7 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="AvaloniaSqliteCurve.Views.SettingView">
 	<StackPanel Orientation="Horizontal">
+        <Button Content="色彩" Click="Button_OnClick"/>
         <TextBlock Text="背景色" VerticalAlignment="Center" />
         <ColorPicker ColorSpectrumShape="Box" Name="BackgroundColorPicker"
                      ColorChanged="ChangeBackgroundColor_OnColorChanged">

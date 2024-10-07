@@ -26,7 +26,7 @@ namespace AvaloniaSqliteCurve.ViewModels
 
         private Axis[] _axis =
         [
-            new DateTimeAxis(TimeSpan.FromMinutes(1), date => $"{date:yyyy:MM:dd HH:mm}:00"),
+            new DateTimeAxis(TimeSpan.FromMinutes(1), date => $"00"),
         ];
 
         public Axis[] XAxes

@@ -7,10 +7,12 @@ using ScottPlot.Plottables;
 using ScottPlot.TickGenerators;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Timers;
 using ReactiveUI;
 using ScottPlot.AxisPanels;
 using Color = Avalonia.Media.Color;
+using Colors = Avalonia.Media.Colors;
 
 namespace AvaloniaSqliteCurve.Views;
 
@@ -39,7 +41,7 @@ public partial class ScottPlotDataStreamerView : UserControl
         plot.Plot.Axes.Title.Label.Text = "实时数据";
         plot.Plot.Axes.Title.Label.FontName = PlotFont;
         plot.Plot.Axes.Title.IsVisible = true;
-        
+
 
         foreach (var point in PointListView.ViewModel.Points)
         {
@@ -101,6 +103,7 @@ public partial class ScottPlotDataStreamerView : UserControl
         {
             return;
         }
+
         CreateCharts();
     }
 
@@ -118,6 +121,7 @@ public partial class ScottPlotDataStreamerView : UserControl
             streamer.ViewScrollLeft();
             _streamers[i] = streamer;
         }
+
         //plot.Plot.Axes.Left.IsVisible = false;
         plot.Plot.Axes.Right.IsVisible = true;
     }
@@ -202,24 +206,32 @@ public partial class ScottPlotDataStreamerView : UserControl
         //EveryLineY();
     }
 
+    private NumericManual? _yTicks;
+
     private void DivideOneRight()
     {
+        if (_yTicks == null)
+        {
+            plot.Plot.Axes.Left.Min = plot.Plot.Axes.Right.Min = ConstData.MinBottom;
+            plot.Plot.Axes.Left.Max = plot.Plot.Axes.Right.Max = ConstData.MaxTop;
+            plot.Plot.Axes.Left.TickLabelStyle.IsVisible = plot.Plot.Axes.Right.TickLabelStyle.IsVisible = false;
+            plot.Plot.Axes.Left.MajorTickStyle.Length = plot.Plot.Axes.Right.MajorTickStyle.Length = 0;
+        }
+
         var range = ConstData.MaxTop - ConstData.MinBottom;
         var valueRangeOfOnePart = range / _yDivide;
 
-        // 设置Y轴上显示范围
-        plot.Plot.Axes.Left.Min = plot.Plot.Axes.Right.Min = ConstData.MinBottom;
-        plot.Plot.Axes.Left.Max = plot.Plot.Axes.Right.Max = ConstData.MaxTop;
-
-        NumericManual ticks = new();
+        _yTicks = new NumericManual();
         for (var i = 0; i <= _yDivide; i++)
         {
             var position = ConstData.MinBottom + valueRangeOfOnePart * i;
-            ticks.AddMajor(position, string.Empty);
+            _yTicks.AddMajor(position, string.Empty);
         }
 
         plot.Plot.Axes.Left.TickGenerator =
-        plot.Plot.Axes.Right.TickGenerator = ticks;
+            plot.Plot.Axes.Right.TickGenerator = _yTicks;
+
+        AddLimit(-100, 100, ScottPlot.Colors.Red);
     }
 
     // 修改X轴显示时间范围
@@ -239,17 +251,9 @@ public partial class ScottPlotDataStreamerView : UserControl
         for (var i = 0; i <= _xDivide; i++)
         {
             var minutesIndex = minutesForOnePart * i;
-            var pointCountIndex = ConstData.DisplayMaxPointsCount - i * pointCountForOnePart;
-            if (i == 0)
-            {
-                ticks.AddMajor(pointCountIndex,
-                    XYLableExtensions.GetTimeStr(minutesIndex, _displayMinuteRange) + " " +
-                    XYLableExtensions.GetTimeUnit(_displayMinuteRange));
-            }
-            else
-            {
-                ticks.AddMajor(pointCountIndex, XYLableExtensions.GetTimeStr(minutesIndex, _displayMinuteRange));
-            }
+            var pointCountIndex = ConstData.DisplayMaxPointsCount - i * pointCountForOnePart; 
+            ticks.AddMajor(pointCountIndex,
+                    XYLableExtensions.GetTimeStr(minutesIndex, _displayMinuteRange));
         }
 
         plot.Plot.Axes.Bottom.TickGenerator = ticks;

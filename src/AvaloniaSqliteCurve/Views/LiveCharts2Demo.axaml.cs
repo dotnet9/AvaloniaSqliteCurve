@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Skia;
 using AvaloniaSqliteCurve.Models;
@@ -34,8 +35,8 @@ public partial class LiveCharts2Demo : Window
 
         MySettingView_OnBackgroundColorChanged(MySettingView.BackgroundColorPicker.Color);
         MySettingView_OnGridLineColorChanged(MySettingView.GridColorPicker.Color);
-        MySettingView_OnXDivideChanged(5);
-        MySettingView_OnYDivideChanged(5);
+        MySettingView_OnXDivideChanged(_xDivide);
+        MySettingView_OnYDivideChanged(_yDivide);
     }
 
 
@@ -130,7 +131,27 @@ public partial class LiveCharts2Demo : Window
         vm.YAxes[0].MinLimit = ConstData.MinBottom;
         vm.YAxes[0].MaxLimit = ConstData.MaxTop;
         vm.YAxes[0].CustomSeparators = separators;
+        AddLimit(-100, 100, ScottPlot.Colors.Red);
     }
+
+    /// <summary>
+    /// 添加上下限标签
+    /// </summary>
+    private void AddLimit(double min, double max, ScottPlot.Color color)
+    {
+        var textColor = new SolidColorBrush(new Avalonia.Media.Color(color.A, color.R, color.G, color.B));
+        MinItems.Items.Add(new TextBlock()
+        {
+            Text = $"{min}",
+            Foreground = textColor
+        });
+        MaxItems.Items.Add(new TextBlock()
+        {
+            Text = $"{max}",
+            Foreground = textColor
+        });
+    }
+
 
     private void UpdateStyle()
     {

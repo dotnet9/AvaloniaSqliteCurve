@@ -13,7 +13,7 @@
     <Design.DataContext>
         <viewModels:LiveCharts2DemoViewModel />
     </Design.DataContext>
-    <Grid RowDefinitions="30 *">
+    <Grid RowDefinitions="30 *" ColumnDefinitions="* Auto">
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="查询时间范围" />
             <u:DatePicker Width="130" SelectedDate="{Binding StartDate}" />
@@ -38,5 +38,8 @@
                             XAxes="{Binding XAxes, Mode=OneWay}"
                             YAxes="{Binding YAxes, Mode=OneWay}">
         </lvc:CartesianChart>
+
+        <ItemsControl Name="MaxItems" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0 40 0 0" />
+        <ItemsControl Name="MinItems" Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="0 0 0 30" />
     </Grid>
 </Window>

@@ -6,7 +6,7 @@
              xmlns:views="clr-namespace:AvaloniaSqliteCurve.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="AvaloniaSqliteCurve.Views.ScottPlotDataStreamerView">
-	<Grid RowDefinitions="Auto, *, 150" ColumnDefinitions="*, Auto" Margin="10">
+	<Grid RowDefinitions="Auto, *, 150" ColumnDefinitions="*, Auto">
         <views:SettingView Name="MySettingView"
                            BackgroundColorChanged="SettingView_OnBackgroundColorChanged"
                            GridLineColorChanged="SettingView_OnGridLineColorChanged"
@@ -16,9 +16,12 @@
                            XDivideChanged="SettingView_OnXDivideChanged"
                            YDivideChanged="SettingView_OnYDivideChanged"
                            YRangeChanged="MySettingView_OnYRangeChanged"/>
-        <ScottPlot:AvaPlot Name="plot" Grid.Row="1" Grid.Column="0" Margin="0 0 20 0" />
-        <ItemsControl Name="MaxItems" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" Margin="-5 30 0 0" />
-        <ItemsControl Name="MinItems" Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom" Margin="-5 0 0 40" />
+        <ScottPlot:AvaPlot Name="plot" Grid.Row="1" Grid.Column="0" Margin="0 0 -15 0" />
+
+        <Line Width="50" Height="2" Fill="Black" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top"/>
+        <ItemsControl Name="MaxItems" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0 40 0 0" />
+        <ItemsControl Name="MinItems" Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="0 0 0 30" />
+        <Line Width="50" Height="2" Fill="Black" Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom"/>
 
         <views:LinePointDataView Name="PointListView" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" />
     </Grid>

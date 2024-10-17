@@ -21,7 +21,7 @@ public partial class LiveCharts2Demo : Window
     private Avalonia.Media.Color _fill = ConstData.Fill;
     private Avalonia.Media.Color _stroke = ConstData.Stroke;
     private float _lineWidth = 1;
-    private LinePattern _linePattern = LinePattern.Solid;
+    private GridLineKind _linePattern = GridLineKind.Solid;
     private int _xDivide = 5;
     private int _yDivide = 5;
 
@@ -78,7 +78,7 @@ public partial class LiveCharts2Demo : Window
         UpdateStyle();
     }
 
-    private void MySettingView_OnGridLineLinePatternChanged(LinePattern pattern)
+    private void MySettingView_OnGridLineLinePatternChanged(GridLineKind pattern)
     {
         _linePattern = pattern;
         UpdateStyle();
@@ -164,9 +164,9 @@ public partial class LiveCharts2Demo : Window
 
         var effect = _linePattern switch
         {
-            LinePattern.Solid => null,
-            LinePattern.Dashed => new DashEffect([10f, 10f]),
-            LinePattern.DenselyDashed => new DashEffect([6f, 6f]),
+            GridLineKind.Solid => null,
+            GridLineKind.Dashed => new DashEffect([10f, 10f]),
+            GridLineKind.DenselyDashed => new DashEffect([6f, 6f]),
             _ => new DashEffect([3f, 5f])
         };
 

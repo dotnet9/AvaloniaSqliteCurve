@@ -13,11 +13,12 @@ public partial class SettingView : UserControl
     public event Action<Avalonia.Media.Color>? BackgroundColorChanged;
     public event Action<Avalonia.Media.Color>? GridLineColorChanged;
     public event Action<bool>? GridLineVisibleChanged;
-    public event Action<LinePattern>? GridLineLinePatternChanged;
+    public event Action<GridLineKind>? GridLineLinePatternChanged;
     public event Action<int>? XDisplayTimeRangeChanged;
     public event Action<int>? XDivideChanged;
     public event Action<int>? YDivideChanged;
     public event Action<double, double>? YRangeChanged;
+    public Action<string>? UpdateMoreText;
 
     public SettingView()
     {
@@ -27,7 +28,7 @@ public partial class SettingView : UserControl
         GridColorPicker.Color = ConstData.Stroke; // 网格色
 
         // 网络线类型
-        foreach (var linePattern in Enum.GetValues<LinePattern>())
+        foreach (var linePattern in Enum.GetValues<GridLineKind>())
         {
             ComboBoxGridLineType.Items.Add(linePattern);
         }
@@ -53,6 +54,8 @@ public partial class SettingView : UserControl
 
         ComboBoxXDivide.SelectedItem = 5;
         ComboBoxYDivide.SelectedItem = 5;
+
+        UpdateMoreText += txt => MoreTxt.Text = txt;
     }
 
     public bool IsTimeRangeVisible
@@ -92,7 +95,7 @@ public partial class SettingView : UserControl
     /// </summary>
     private void ComboBoxGridLineType_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
-        if (ComboBoxGridLineType.SelectionBoxItem is LinePattern pattern)
+        if (ComboBoxGridLineType.SelectionBoxItem is GridLineKind pattern)
         {
             GridLineLinePatternChanged?.Invoke(pattern);
         }

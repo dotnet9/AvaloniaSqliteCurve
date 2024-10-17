@@ -37,5 +37,6 @@
         <TextBox x:Name="MinY" Width="50" Text="-300" TextChanged="MinY_OnTextChanged" />
         <TextBlock Text="Y最大值：" />
         <TextBox x:Name="MaxY" Width="50" Text="300" TextChanged="MaxY_OnTextChanged" />
+        <TextBlock Name="MoreTxt" />
     </StackPanel>
 </UserControl>

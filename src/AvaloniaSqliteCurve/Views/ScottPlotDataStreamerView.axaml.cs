@@ -2,17 +2,18 @@ using Avalonia.Controls;
 using Avalonia.Media;
 using AvaloniaSqliteCurve.Extensions;
 using AvaloniaSqliteCurve.Models;
+using ReactiveUI;
 using ScottPlot;
+using ScottPlot.AxisPanels;
 using ScottPlot.Plottables;
 using ScottPlot.TickGenerators;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Timers;
-using ReactiveUI;
-using ScottPlot.AxisPanels;
+using Ursa.Common;
+using YamlDotNet.Core.Tokens;
+using static System.Net.Mime.MediaTypeNames;
 using Color = Avalonia.Media.Color;
-using Colors = Avalonia.Media.Colors;
 
 namespace AvaloniaSqliteCurve.Views;
 
@@ -25,6 +26,9 @@ public partial class ScottPlotDataStreamerView : UserControl
     private int _displayMinuteRange = 5;
     private int _xDivide = 5;
     private int _yDivide = 5;
+
+    private VerticalLine? _vLine;
+    private Dictionary<int, ScottPlot.Plottables.Text> _streamerTexts = new();
 
     private readonly Dictionary<int, DataStreamer> _streamers = new();
     private readonly Dictionary<int, RightAxis> _rightAxes = new();
@@ -58,6 +62,8 @@ public partial class ScottPlotDataStreamerView : UserControl
         // 生成曲线
         plot.Interaction.Disable();
         plot.Plot.Axes.ContinuouslyAutoscale = false;
+        plot.PointerMoved += Plot_PointerMoved;
+
         CreateCharts();
 
         _addNewDataTimer.Elapsed += AddNewDataHandler;
@@ -70,6 +76,66 @@ public partial class ScottPlotDataStreamerView : UserControl
         SettingView_OnGridLineColorChanged(MySettingView.GridColorPicker.Color);
         SettingView_OnXDivideChanged(_xDivide);
         SettingView_OnYDivideChanged(_yDivide);
+    }
+
+    private void Plot_PointerMoved(object? sender, Avalonia.Input.PointerEventArgs e)
+    {
+        var mousePos = e.GetPosition(plot);
+        var dataArea = plot.Plot.LastRender.DataRect;
+        var width = dataArea.Width;
+        var x = mousePos.X - dataArea.Left;
+        var ratio = x / width;
+        var pointCountIndex = (int)(ConstData.DisplayMaxPointsCount * ratio);
+        if (pointCountIndex < 0)
+        {
+            pointCountIndex = 0;
+        }
+
+        if (pointCountIndex >= ConstData.DisplayMaxPointsCount)
+        {
+            pointCountIndex = ConstData.DisplayMaxPointsCount - 1;
+        }
+
+        if (_vLine == null)
+        {
+            _vLine = plot.Plot.Add.VerticalLine(pointCountIndex, pattern: LinePattern.Solid);
+            _vLine.IsVisible = true;
+
+            for (var i = 0; i < _streamers.Count; i++)
+            {
+                var value = _streamers[i].Data.Data[pointCountIndex];
+                _streamerTexts[i] = CreateText(pointCountIndex, value);
+                _streamerTexts[i].IsVisible = value != double.NaN;
+            }
+        }
+        else
+        {
+            _vLine.X = pointCountIndex;
+
+            for (var i = 0; i < _streamers.Count; i++)
+            {
+                var value = _streamers[i].Data.Data[pointCountIndex];
+                _streamerTexts[i].IsVisible = value != double.NaN;
+                _streamerTexts[i].LabelText = value.ToString();
+                _streamerTexts[i].Location = new Coordinates(pointCountIndex, value);
+            }
+        }
+
+        MySettingView.UpdateMoreText($"DataRect=({dataArea}),x={x},index={pointCountIndex}");
+
+        plot.Refresh();
+    }
+
+    private ScottPlot.Plottables.Text CreateText(double x, double y)
+    {
+        var text = y.ToString();
+        var txtSample = plot.Plot.Add.Text(text, x, y);
+
+        txtSample.LabelFontSize = 14;
+        txtSample.LabelFontName = Fonts.Detect(text); // this works
+        txtSample.LabelStyle.SetBestFont(); // this also works
+        txtSample.LabelFontColor = ScottPlot.Colors.DarkRed;
+        return txtSample;
     }
 
     private void AddNewDataHandler(object? sender, ElapsedEventArgs e)
@@ -164,12 +230,12 @@ public partial class ScottPlotDataStreamerView : UserControl
     }
 
     // 修改表格线类型
-    private void SettingView_OnGridLineLinePatternChanged(LinePattern pattern)
+    private void SettingView_OnGridLineLinePatternChanged(GridLineKind pattern)
     {
-        plot.Plot.Grid.XAxisStyle.MajorLineStyle.Pattern = pattern;
-        plot.Plot.Grid.XAxisStyle.MinorLineStyle.Pattern = pattern;
-        plot.Plot.Grid.YAxisStyle.MajorLineStyle.Pattern = pattern;
-        plot.Plot.Grid.YAxisStyle.MinorLineStyle.Pattern = pattern;
+        plot.Plot.Grid.XAxisStyle.MajorLineStyle.Pattern = pattern.ToLinePattern();
+        plot.Plot.Grid.XAxisStyle.MinorLineStyle.Pattern = pattern.ToLinePattern();
+        plot.Plot.Grid.YAxisStyle.MajorLineStyle.Pattern = pattern.ToLinePattern();
+        plot.Plot.Grid.YAxisStyle.MinorLineStyle.Pattern = pattern.ToLinePattern();
     }
 
     // 修改X等分
@@ -251,9 +317,9 @@ public partial class ScottPlotDataStreamerView : UserControl
         for (var i = 0; i <= _xDivide; i++)
         {
             var minutesIndex = minutesForOnePart * i;
-            var pointCountIndex = ConstData.DisplayMaxPointsCount - i * pointCountForOnePart; 
+            var pointCountIndex = ConstData.DisplayMaxPointsCount - i * pointCountForOnePart;
             ticks.AddMajor(pointCountIndex,
-                    XYLableExtensions.GetTimeStr(minutesIndex, _displayMinuteRange));
+                XYLableExtensions.GetTimeStr(minutesIndex, _displayMinuteRange));
         }
 
         plot.Plot.Axes.Bottom.TickGenerator = ticks;

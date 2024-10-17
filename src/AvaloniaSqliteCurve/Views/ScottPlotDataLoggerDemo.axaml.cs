@@ -121,12 +121,12 @@ public partial class ScottPlotDataLoggerDemo : Window
     }
 
     // 修改表格线类型
-    private void SettingView_OnGridLineLinePatternChanged(LinePattern pattern)
+    private void SettingView_OnGridLineLinePatternChanged(GridLineKind pattern)
     {
-        plot.Plot.Grid.XAxisStyle.MajorLineStyle.Pattern = pattern;
-        plot.Plot.Grid.XAxisStyle.MinorLineStyle.Pattern = pattern;
-        plot.Plot.Grid.YAxisStyle.MajorLineStyle.Pattern = pattern;
-        plot.Plot.Grid.YAxisStyle.MinorLineStyle.Pattern = pattern;
+        plot.Plot.Grid.XAxisStyle.MajorLineStyle.Pattern = pattern.ToLinePattern();
+        plot.Plot.Grid.XAxisStyle.MinorLineStyle.Pattern = pattern.ToLinePattern();
+        plot.Plot.Grid.YAxisStyle.MajorLineStyle.Pattern = pattern.ToLinePattern();
+        plot.Plot.Grid.YAxisStyle.MinorLineStyle.Pattern = pattern.ToLinePattern();
     }
 
     // 修改X等分

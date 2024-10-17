@@ -114,7 +114,7 @@ public partial class ScottPlotDataStreamerView : UserControl
 
             for (var i = 0; i < _streamers.Count; i++)
             {
-                var value = _streamers[i].Data.Data[pointCountIndex];
+                var value = _streamers[i].Data.Data[ConstData.DisplayMaxPointsCount - pointCountIndex];
                 _streamerTexts[i].IsVisible = value != double.NaN;
                 _streamerTexts[i].LabelText = value.ToString();
                 _streamerTexts[i].Location = new Coordinates(pointCountIndex, value);

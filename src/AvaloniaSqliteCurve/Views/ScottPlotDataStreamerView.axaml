@@ -6,7 +6,7 @@
              xmlns:views="clr-namespace:AvaloniaSqliteCurve.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="AvaloniaSqliteCurve.Views.ScottPlotDataStreamerView">
-	<Grid RowDefinitions="Auto, *, 150" ColumnDefinitions="*, Auto">
+	<Grid RowDefinitions="Auto, *, 30" ColumnDefinitions="*, Auto">
         <views:SettingView Name="MySettingView"
                            BackgroundColorChanged="SettingView_OnBackgroundColorChanged"
                            GridLineColorChanged="SettingView_OnGridLineColorChanged"

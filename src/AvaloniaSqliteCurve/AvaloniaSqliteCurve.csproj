@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net9.0</TargetFramework>
+		<TargetFramework>net9.0-windows</TargetFramework>
 		<Nullable>enable</Nullable>
 		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
@@ -9,7 +9,7 @@
 		<PublishAot>true</PublishAot>
 		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 	</PropertyGroup>
-	<PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0'))">
+	<PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0-windows'))">
 		<IsTrimmable>true</IsTrimmable>
 		<PublishTrimmed>true</PublishTrimmed>
 	</PropertyGroup>
@@ -35,5 +35,6 @@
 		<PackageReference Include="Semi.Avalonia" Version="11.2.0-beta1" />
 		<PackageReference Include="Semi.Avalonia.ColorPicker" Version="11.1.0.5-beta1" />
 		<PackageReference Include="Semi.Avalonia.DataGrid" Version="11.1.0.5-beta1" />
+		<PackageReference Include="YY-Thunks" Version="1.1.4-Beta4" />
 	</ItemGroup>
 </Project>

@@ -10,9 +10,6 @@ using ScottPlot.TickGenerators;
 using System;
 using System.Collections.Generic;
 using System.Timers;
-using Ursa.Common;
-using YamlDotNet.Core.Tokens;
-using static System.Net.Mime.MediaTypeNames;
 using Color = Avalonia.Media.Color;
 
 namespace AvaloniaSqliteCurve.Views;
@@ -62,7 +59,7 @@ public partial class ScottPlotDataStreamerView : UserControl
         // Éú³ÉÇúÏß
         plot.Interaction.Disable();
         plot.Plot.Axes.ContinuouslyAutoscale = false;
-        plot.PointerMoved += Plot_PointerMoved;
+        plot.PointerPressed += Plot_PointerPressed;
 
         CreateCharts();
 
@@ -78,7 +75,7 @@ public partial class ScottPlotDataStreamerView : UserControl
         SettingView_OnYDivideChanged(_yDivide);
     }
 
-    private void Plot_PointerMoved(object? sender, Avalonia.Input.PointerEventArgs e)
+    private void Plot_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
     {
         var mousePos = e.GetPosition(plot);
         var dataArea = plot.Plot.LastRender.DataRect;
@@ -142,13 +139,16 @@ public partial class ScottPlotDataStreamerView : UserControl
     {
         for (var i = 0; i < ConstData.LineCount; i++)
         {
-            if (DateTime.Now.Millisecond % 5 == 1)
+            for (var j = 0; j < 10; j++)
             {
-                _streamers[i].Add(Random.Shared.Next(-1000, 1000));
-            }
-            else
-            {
-                _streamers[i].Add(Random.Shared.Next(-50, 200));
+                if (DateTime.Now.Millisecond % 5 == 1)
+                {
+                    _streamers[i].Add(Random.Shared.Next(-1000, 1000));
+                }
+                else
+                {
+                    _streamers[i].Add(Random.Shared.Next(-50, 200));
+                }
             }
         }
     }

@@ -139,17 +139,8 @@ public partial class ScottPlotDataStreamerView : UserControl
     {
         for (var i = 0; i < ConstData.LineCount; i++)
         {
-            for (var j = 0; j < 10; j++)
-            {
-                if (DateTime.Now.Millisecond % 5 == 1)
-                {
-                    _streamers[i].Add(Random.Shared.Next(-1000, 1000));
-                }
-                else
-                {
-                    _streamers[i].Add(Random.Shared.Next(-50, 200));
-                }
-            }
+            var value = DateTime.Now.Ticks * (DateTime.Now.Ticks % 5 == 1 ? -1.0 : 1.0) % 300;
+            _streamers[i].Add(value);
         }
     }
 
@@ -297,7 +288,7 @@ public partial class ScottPlotDataStreamerView : UserControl
         plot.Plot.Axes.Left.TickGenerator =
             plot.Plot.Axes.Right.TickGenerator = _yTicks;
 
-        AddLimit(-100, 100, ScottPlot.Colors.Red);
+        AddLimit(ConstData.MinBottom, ConstData.MaxTop, ScottPlot.Colors.Red);
     }
 
     // 修改X轴显示时间范围

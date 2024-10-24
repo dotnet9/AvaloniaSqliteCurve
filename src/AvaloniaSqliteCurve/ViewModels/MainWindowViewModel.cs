@@ -24,6 +24,11 @@ public class MainWindowViewModel : ViewModelBase
         new ScottPlotSignalDemo().Show();
     }
 
+    public void ExecuteShowCustomPlotHandler()
+    {
+        new CustomCursorView().Show();
+    }
+
     public void ShowDataViewHandler()
     {
         new PointDataView().Show();

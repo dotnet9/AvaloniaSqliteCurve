@@ -29,6 +29,7 @@
             <Button Content="ScottPlot DataLogger" Command="{Binding ExecuteShowScottPlotDataLoggerHandler}" />
             <Button Content="ScottPlot DataStreamer" Command="{Binding ExecuteShowScottPlotDataStreamerHandler}" />
             <Button Content="ScottPlot Signal" Command="{Binding ExecuteShowScottPlotSignalHandler}" />
+            <Button Content="Custom Plot" Command="{Binding ExecuteShowCustomPlotHandler}" />
             <Button Content="数值窗口" Command="{Binding ShowDataViewHandler}" />
         </StackPanel>
 

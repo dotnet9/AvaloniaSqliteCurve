@@ -42,7 +42,9 @@ public partial class ScottPlotDataStreamerView : UserControl
         plot.Plot.Axes.Title.Label.Text = "实时数据";
         plot.Plot.Axes.Title.Label.FontName = PlotFont;
         plot.Plot.Axes.Title.IsVisible = true;
-
+        plot.Plot.Axes.AntiAlias(false);
+        plot.Plot.Axes.ContinuouslyAutoscale = false;
+        plot.UserInputProcessor.Disable();
 
         foreach (var point in PointListView.ViewModel.Points)
         {

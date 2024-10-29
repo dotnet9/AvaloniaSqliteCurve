@@ -59,8 +59,6 @@ public partial class ScottPlotDataStreamerView : UserControl
         notUpdate = false;
 
         // Éú³ÉÇúÏß
-        plot.Interaction.Disable();
-        plot.Plot.Axes.ContinuouslyAutoscale = false;
         plot.PointerPressed += Plot_PointerPressed;
 
         CreateCharts();

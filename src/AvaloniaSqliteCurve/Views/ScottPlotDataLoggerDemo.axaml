@@ -5,9 +5,10 @@
         xmlns:ScottPlot="clr-namespace:ScottPlot.Avalonia;assembly=ScottPlot.Avalonia"
         xmlns:views="clr-namespace:AvaloniaSqliteCurve.Views"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+
         Title="ScrottPlot DataLogger"
         x:Class="AvaloniaSqliteCurve.Views.ScottPlotDataLoggerDemo">
-    <Grid RowDefinitions="Auto, *, 30" ColumnDefinitions="*, Auto">
+	<Grid RowDefinitions="Auto, *, 30" ColumnDefinitions="*, Auto">
         <views:SettingView Name="MySettingView"
                            BackgroundColorChanged="SettingView_OnBackgroundColorChanged"
                            GridLineColorChanged="SettingView_OnGridLineColorChanged"
@@ -23,5 +24,7 @@
         <ItemsControl Name="MaxItems" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0 40 0 0" />
         <ItemsControl Name="MinItems" Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="0 0 0 30" />
         <Line Width="50" Height="2" Fill="Black" Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom"/>
+
+        <views:LinePointDataView Name="PointListView" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" />
     </Grid>
 </Window>

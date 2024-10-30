@@ -46,15 +46,15 @@ public partial class ScottPlotDataLoggerDemo : Window
         plot.Plot.Axes.ContinuouslyAutoscale = false;
         plot.UserInputProcessor.Disable();
 
-        //foreach (var point in PointListView.ViewModel.Points)
-        //{
-        //    point.WhenAnyValue(p => p.Visible).Subscribe(_ => Update());
-        //    point.WhenAnyValue(p => p.LineColor).Subscribe(_ => Update());
-        //    point.WhenAnyValue(p => p.LineWidth).Subscribe(_ => Update());
-        //    point.WhenAnyValue(p => p.Min).Subscribe(_ => Update());
-        //    point.WhenAnyValue(p => p.Max).Subscribe(_ => Update());
-        //    point.WhenAnyValue(p => p.WindowIndex).Subscribe(_ => Update());
-        //}
+        foreach (var point in PointListView.ViewModel.Points)
+        {
+            point.WhenAnyValue(p => p.Visible).Subscribe(_ => Update());
+            point.WhenAnyValue(p => p.LineColor).Subscribe(_ => Update());
+            point.WhenAnyValue(p => p.LineWidth).Subscribe(_ => Update());
+            point.WhenAnyValue(p => p.Min).Subscribe(_ => Update());
+            point.WhenAnyValue(p => p.Max).Subscribe(_ => Update());
+            point.WhenAnyValue(p => p.WindowIndex).Subscribe(_ => Update());
+        }
 
         _notUpdate = false;
 
@@ -170,10 +170,10 @@ public partial class ScottPlotDataLoggerDemo : Window
         _loggers.Clear();
         for (var i = 0; i < ConstData.LineCount; i++)
         {
-            //var point = PointListView.ViewModel!.Points[i];
+            var point = PointListView.ViewModel!.Points[i];
             var logger = plot.Plot.Add.DataLogger();
-            //logger.Color = point.LineColor.Value.ToScottPlotColor();
-            //logger.LineWidth = point.LineWidth;
+            logger.Color = point.LineColor.Value.ToScottPlotColor();
+            logger.LineWidth = point.LineWidth;
             logger.ManageAxisLimits = false;
             logger.ViewSlide();
             _loggers[i] = logger;

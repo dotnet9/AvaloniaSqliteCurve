@@ -49,9 +49,9 @@ public class LinePoint : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _lineColor, value);
     }
 
-    private int _lineWidth;
+    private float _lineWidth;
 
-    public int LineWidth
+    public float LineWidth
     {
         get => _lineWidth;
         set => this.RaiseAndSetIfChanged(ref _lineWidth, value);

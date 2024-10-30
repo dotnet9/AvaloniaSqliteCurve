@@ -5,20 +5,23 @@
         xmlns:ScottPlot="clr-namespace:ScottPlot.Avalonia;assembly=ScottPlot.Avalonia"
         xmlns:views="clr-namespace:AvaloniaSqliteCurve.Views"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-
         Title="ScrottPlot DataLogger"
         x:Class="AvaloniaSqliteCurve.Views.ScottPlotDataLoggerDemo">
-    <Grid RowDefinitions="Auto, *" ColumnDefinitions="*, Auto" Margin="10">
+    <Grid RowDefinitions="Auto, *, 30" ColumnDefinitions="*, Auto">
         <views:SettingView Name="MySettingView"
-            BackgroundColorChanged="SettingView_OnBackgroundColorChanged"
-            GridLineColorChanged="SettingView_OnGridLineColorChanged"
-            GridLineVisibleChanged="SettingView_OnGridLineVisibleChanged"
-            GridLineLinePatternChanged="SettingView_OnGridLineLinePatternChanged"
-            XDisplayTimeRangeChanged="SettingView_OnXDisplayTimeRangeChanged"
-            XDivideChanged="SettingView_OnXDivideChanged"
-            YDivideChanged="SettingView_OnYDivideChanged"/>
-        <ScottPlot:AvaPlot Name="plot" Grid.Row="1" Grid.Column="0" Margin="0 0 20 0" />
-        <ItemsControl Name="MaxItems" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" Margin="-5 30 0 0" />
-        <ItemsControl Name="MinItems" Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom" Margin="-5 0 0 40" />
+                           BackgroundColorChanged="SettingView_OnBackgroundColorChanged"
+                           GridLineColorChanged="SettingView_OnGridLineColorChanged"
+                           GridLineVisibleChanged="SettingView_OnGridLineVisibleChanged"
+                           GridLineLinePatternChanged="SettingView_OnGridLineLinePatternChanged"
+                           XDisplayTimeRangeChanged="SettingView_OnXDisplayTimeRangeChanged"
+                           XDivideChanged="SettingView_OnXDivideChanged"
+                           YDivideChanged="SettingView_OnYDivideChanged"
+                           YRangeChanged="MySettingView_OnYRangeChanged"/>
+        <ScottPlot:AvaPlot Name="plot" Grid.Row="1" Grid.Column="0" Margin="0 0 -15 0" />
+
+        <Line Width="50" Height="2" Fill="Black" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top"/>
+        <ItemsControl Name="MaxItems" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0 40 0 0" />
+        <ItemsControl Name="MinItems" Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="0 0 0 30" />
+        <Line Width="50" Height="2" Fill="Black" Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom"/>
     </Grid>
 </Window>

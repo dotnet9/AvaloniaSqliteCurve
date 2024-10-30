@@ -2,6 +2,9 @@ using Avalonia.Controls;
 using Avalonia.Media;
 using AvaloniaSqliteCurve.Extensions;
 using AvaloniaSqliteCurve.Models;
+using ReactiveUI;
+using ScottPlot;
+using ScottPlot.AxisPanels;
 using ScottPlot.Plottables;
 using ScottPlot.TickGenerators;
 using System;
@@ -21,7 +24,11 @@ public partial class ScottPlotDataLoggerDemo : Window
     private int _xDivide = 5;
     private int _yDivide = 5;
 
-    private readonly List<DataLogger> _loggers = new();
+    private VerticalLine? _vLine;
+    private Dictionary<int, ScottPlot.Plottables.Text> _streamerTexts = new();
+
+    private readonly Dictionary<int, DataLogger> _loggers = new();
+    private readonly Dictionary<int, RightAxis> _rightAxes = new();
 
     static ScottPlotDataLoggerDemo()
     {
@@ -39,15 +46,23 @@ public partial class ScottPlotDataLoggerDemo : Window
         plot.Plot.Axes.ContinuouslyAutoscale = false;
         plot.UserInputProcessor.Disable();
 
+        //foreach (var point in PointListView.ViewModel.Points)
+        //{
+        //    point.WhenAnyValue(p => p.Visible).Subscribe(_ => Update());
+        //    point.WhenAnyValue(p => p.LineColor).Subscribe(_ => Update());
+        //    point.WhenAnyValue(p => p.LineWidth).Subscribe(_ => Update());
+        //    point.WhenAnyValue(p => p.Min).Subscribe(_ => Update());
+        //    point.WhenAnyValue(p => p.Max).Subscribe(_ => Update());
+        //    point.WhenAnyValue(p => p.WindowIndex).Subscribe(_ => Update());
+        //}
+
+        _notUpdate = false;
+
         // 生成曲线
-        plot.Plot.Axes.SetLimits(0, ConstData.DisplayMaxPointsCount, ConstData.MinBottom, ConstData.MaxTop);
-        for (var i = 0; i < ConstData.LineCount; i++)
-        {
-            var logger = plot.Plot.Add.DataLogger();
-            logger.ManageAxisLimits = false;
-            logger.ViewSlide();
-            _loggers.Add(logger);
-        }
+        plot.PointerPressed += Plot_PointerPressed;
+
+        // 生成曲线
+        CreateCharts();
 
         _addNewDataTimer.Elapsed += AddNewDataHandler;
         _updateDataTimer.Elapsed += UpdateDataHandler;
@@ -57,8 +72,67 @@ public partial class ScottPlotDataLoggerDemo : Window
 
         SettingView_OnBackgroundColorChanged(MySettingView.BackgroundColorPicker.Color);
         SettingView_OnGridLineColorChanged(MySettingView.GridColorPicker.Color);
-        SettingView_OnXDivideChanged(5);
-        SettingView_OnYDivideChanged(5);
+        SettingView_OnXDivideChanged(_xDivide);
+        SettingView_OnYDivideChanged(_yDivide);
+    }
+    private void Plot_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
+    {
+        var mousePos = e.GetPosition(plot);
+        var dataArea = plot.Plot.LastRender.DataRect;
+        var width = dataArea.Width;
+        var x = mousePos.X - dataArea.Left;
+        var ratio = x / width;
+        var pointCountIndex = (int)(ConstData.DisplayMaxPointsCount * ratio);
+        if (pointCountIndex < 0)
+        {
+            pointCountIndex = 0;
+        }
+
+        if (pointCountIndex >= ConstData.DisplayMaxPointsCount)
+        {
+            pointCountIndex = ConstData.DisplayMaxPointsCount - 1;
+        }
+
+        //if (_vLine == null)
+        //{
+        //    _vLine = plot.Plot.Add.VerticalLine(pointCountIndex, pattern: LinePattern.Solid);
+        //    _vLine.IsVisible = true;
+
+        //    for (var i = 0; i < _loggers.Count; i++)
+        //    {
+        //        var value = _loggers[i].Data.Data[pointCountIndex];
+        //        _streamerTexts[i] = CreateText(pointCountIndex, value);
+        //        _streamerTexts[i].IsVisible = value != double.NaN;
+        //    }
+        //}
+        //else
+        //{
+        //    _vLine.X = pointCountIndex;
+
+        //    for (var i = 0; i < _streamers.Count; i++)
+        //    {
+        //        var value = _streamers[i].Data.Data[ConstData.DisplayMaxPointsCount - pointCountIndex];
+        //        _streamerTexts[i].IsVisible = value != double.NaN;
+        //        _streamerTexts[i].LabelText = value.ToString();
+        //        _streamerTexts[i].Location = new Coordinates(pointCountIndex, value);
+        //    }
+        //}
+
+        MySettingView.UpdateMoreText($"DataRect=({dataArea}),x={x},index={pointCountIndex}");
+
+        plot.Refresh();
+    }
+
+    private ScottPlot.Plottables.Text CreateText(double x, double y)
+    {
+        var text = y.ToString();
+        var txtSample = plot.Plot.Add.Text(text, x, y);
+
+        txtSample.LabelFontSize = 14;
+        txtSample.LabelFontName = Fonts.Detect(text); // this works
+        txtSample.LabelStyle.SetBestFont(); // this also works
+        txtSample.LabelFontColor = ScottPlot.Colors.DarkRed;
+        return txtSample;
     }
 
     private void AddNewDataHandler(object? sender, ElapsedEventArgs e)
@@ -76,6 +150,36 @@ public partial class ScottPlotDataLoggerDemo : Window
         {
             plot.Refresh();
         }
+    }
+
+    private readonly bool _notUpdate;
+
+    private void Update()
+    {
+        if (_notUpdate)
+        {
+            return;
+        }
+
+        CreateCharts();
+    }
+
+    private void CreateCharts()
+    {
+        plot.Plot.Clear();
+        _loggers.Clear();
+        for (var i = 0; i < ConstData.LineCount; i++)
+        {
+            //var point = PointListView.ViewModel!.Points[i];
+            var logger = plot.Plot.Add.DataLogger();
+            //logger.Color = point.LineColor.Value.ToScottPlotColor();
+            //logger.LineWidth = point.LineWidth;
+            logger.ManageAxisLimits = false;
+            logger.ViewSlide();
+            _loggers[i] = logger;
+        }
+
+        plot.Plot.Axes.Right.IsVisible = true;
     }
 
     /// <summary>
@@ -99,6 +203,7 @@ public partial class ScottPlotDataLoggerDemo : Window
     // 修改背景色
     private void SettingView_OnBackgroundColorChanged(Color color)
     {
+        plot.Plot.FigureBackground.Color = Color.FromRgb(230, 232, 234).ToScottPlotColor();
         plot.Plot.DataBackground.Color = color.ToScottPlotColor();
     }
 
@@ -137,7 +242,6 @@ public partial class ScottPlotDataLoggerDemo : Window
         ChangeYRange();
     }
 
-
     /// <summary>
     /// 修改Y轴上下限
     /// </summary>
@@ -151,11 +255,18 @@ public partial class ScottPlotDataLoggerDemo : Window
 
     private void ChangeYRange()
     {
-        // 1、只显示右侧Y轴
-        DivideOneRight();
+        try
+        {
+            // 1、只显示右侧Y轴
+            DivideOneRight();
 
-        // 每条线一个Y轴
-        //EveryLineY();
+            // 每条线一个Y轴
+            //EveryLineY();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Change Y exception: {ex.Message}");
+        }
     }
 
     private NumericManual? _yTicks;

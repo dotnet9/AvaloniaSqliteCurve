@@ -56,7 +56,7 @@ public partial class ScottPlotDataStreamerView : UserControl
             point.WhenAnyValue(p => p.WindowIndex).Subscribe(_ => Update());
         }
 
-        notUpdate = false;
+        _notUpdate = false;
 
         // Éú³ÉÇúÏß
         plot.PointerPressed += Plot_PointerPressed;
@@ -152,11 +152,11 @@ public partial class ScottPlotDataStreamerView : UserControl
         }
     }
 
-    private bool notUpdate = true;
+    private readonly bool _notUpdate;
 
     private void Update()
     {
-        if (notUpdate)
+        if (_notUpdate)
         {
             return;
         }

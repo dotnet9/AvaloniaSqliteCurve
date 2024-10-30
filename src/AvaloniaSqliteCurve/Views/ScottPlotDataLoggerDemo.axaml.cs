@@ -1,13 +1,12 @@
 using Avalonia.Controls;
 using Avalonia.Media;
 using AvaloniaSqliteCurve.Extensions;
-using ScottPlot;
+using AvaloniaSqliteCurve.Models;
 using ScottPlot.Plottables;
 using ScottPlot.TickGenerators;
 using System;
 using System.Collections.Generic;
 using System.Timers;
-using AvaloniaSqliteCurve.Models;
 using Color = Avalonia.Media.Color;
 
 namespace AvaloniaSqliteCurve.Views;
@@ -36,10 +35,11 @@ public partial class ScottPlotDataLoggerDemo : Window
         plot.Plot.Axes.Title.Label.Text = "实时数据";
         plot.Plot.Axes.Title.Label.FontName = PlotFont;
         plot.Plot.Axes.Title.IsVisible = true;
+        plot.Plot.Axes.AntiAlias(false);
+        plot.Plot.Axes.ContinuouslyAutoscale = false;
+        plot.UserInputProcessor.Disable();
 
         // 生成曲线
-        plot.Interaction.Disable();
-        plot.Plot.Axes.ContinuouslyAutoscale = false;
         plot.Plot.Axes.SetLimits(0, ConstData.DisplayMaxPointsCount, ConstData.MinBottom, ConstData.MaxTop);
         for (var i = 0; i < ConstData.LineCount; i++)
         {
@@ -65,14 +65,8 @@ public partial class ScottPlotDataLoggerDemo : Window
     {
         for (var i = 0; i < ConstData.LineCount; i++)
         {
-            if (DateTime.Now.Millisecond % 5 == 1)
-            {
-                _loggers[i].Add(Random.Shared.Next(-1000, 1000));
-            }
-            else
-            {
-                _loggers[i].Add(Random.Shared.Next(-50, 200));
-            }
+            var value = DateTime.Now.Ticks * (DateTime.Now.Ticks % 5 == 1 ? -1.0 : 1.0) % 300;
+            _loggers[i].Add(value);
         }
     }
 
@@ -140,19 +134,56 @@ public partial class ScottPlotDataLoggerDemo : Window
     private void SettingView_OnYDivideChanged(int divide)
     {
         _yDivide = divide;
+        ChangeYRange();
+    }
 
-        const double range = ConstData.MaxTop - ConstData.MinBottom;
+
+    /// <summary>
+    /// 修改Y轴上下限
+    /// </summary>
+    /// <param name="min"></param>
+    /// <param name="max"></param>
+    /// <exception cref="NotImplementedException"></exception>
+    private void MySettingView_OnYRangeChanged(double min, double max)
+    {
+        ChangeYRange();
+    }
+
+    private void ChangeYRange()
+    {
+        // 1、只显示右侧Y轴
+        DivideOneRight();
+
+        // 每条线一个Y轴
+        //EveryLineY();
+    }
+
+    private NumericManual? _yTicks;
+
+    private void DivideOneRight()
+    {
+        if (_yTicks == null)
+        {
+            plot.Plot.Axes.Left.Min = plot.Plot.Axes.Right.Min = ConstData.MinBottom;
+            plot.Plot.Axes.Left.Max = plot.Plot.Axes.Right.Max = ConstData.MaxTop;
+            plot.Plot.Axes.Left.TickLabelStyle.IsVisible = plot.Plot.Axes.Right.TickLabelStyle.IsVisible = false;
+            plot.Plot.Axes.Left.MajorTickStyle.Length = plot.Plot.Axes.Right.MajorTickStyle.Length = 0;
+        }
+
+        var range = ConstData.MaxTop - ConstData.MinBottom;
         var valueRangeOfOnePart = range / _yDivide;
 
-        NumericManual ticks = new();
+        _yTicks = new NumericManual();
         for (var i = 0; i <= _yDivide; i++)
         {
             var position = ConstData.MinBottom + valueRangeOfOnePart * i;
-            var label = string.Empty;//$"{position:F2}";
-            ticks.AddMajor(position, label);
+            _yTicks.AddMajor(position, string.Empty);
         }
 
-        plot.Plot.Axes.Left.TickGenerator = ticks;
+        plot.Plot.Axes.Left.TickGenerator =
+            plot.Plot.Axes.Right.TickGenerator = _yTicks;
+
+        AddLimit(ConstData.MinBottom, ConstData.MaxTop, ScottPlot.Colors.Red);
     }
 
     // 修改X轴显示时间范围
@@ -167,20 +198,14 @@ public partial class ScottPlotDataLoggerDemo : Window
         NumericManual ticks = new();
         var pointCountForOnePart = ConstData.DisplayMaxPointsCount * 1.0 / _xDivide;
         var minutesForOnePart = _displayMinuteRange * 1.0 / _xDivide;
+        plot.Plot.Axes.Bottom.Min = 0;
+        plot.Plot.Axes.Bottom.Max = ConstData.DisplayMaxPointsCount;
         for (var i = 0; i <= _xDivide; i++)
         {
             var minutesIndex = minutesForOnePart * i;
             var pointCountIndex = ConstData.DisplayMaxPointsCount - i * pointCountForOnePart;
-            if (i == 0)
-            {
-                ticks.AddMajor(pointCountIndex,
-                    XYLableExtensions.GetTimeStr(minutesIndex, _displayMinuteRange) + " " +
-                    XYLableExtensions.GetTimeUnit(_displayMinuteRange));
-            }
-            else
-            {
-                ticks.AddMajor(pointCountIndex, XYLableExtensions.GetTimeStr(minutesIndex, _displayMinuteRange));
-            }
+            ticks.AddMajor(pointCountIndex,
+                XYLableExtensions.GetTimeStr(minutesIndex, _displayMinuteRange));
         }
 
         plot.Plot.Axes.Bottom.TickGenerator = ticks;

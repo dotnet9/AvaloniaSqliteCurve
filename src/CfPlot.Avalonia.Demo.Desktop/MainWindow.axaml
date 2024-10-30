@@ -1,0 +1,38 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="using:CfPlot.Avalonia"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CfPlot.Avalonia.Demo.Desktop.MainWindow"
+        Title="SkiaSharpDemo">
+    <Grid RowDefinitions="30 *">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="创建" />
+            <TextBox Width="50" Name="TxtLineCount" Text="1" />
+            <TextBlock Text="条曲线，每条曲线" />
+            <TextBox Width="50" Name="TxtPointCount" Text="1000" />
+            <TextBlock Text="个点, 添加间隔" />
+            <TextBox Width="50" Name="TxtAddInterval" Text="1000" />
+            <TextBlock Text="ms, 刷新间隔" />
+            <TextBox Width="50" Name="TxtRefreshInterval" Text="1000" />
+            <TextBlock Text="ms" />
+            <Button Content="生成实时曲线" Click="Start_OnClick" />
+            <Button Content="停止实时曲线" Click="Stop_OnClick" />
+            <ComboBox>
+                <ComboBoxItem>One</ComboBoxItem>
+                <ComboBoxItem>Two</ComboBoxItem>
+                <ComboBoxItem>Three</ComboBoxItem>
+                <ComboBoxItem>Four</ComboBoxItem>
+            </ComboBox>
+            <ComboBox>
+                <ComboBoxItem>1</ComboBoxItem>
+                <ComboBoxItem>2</ComboBoxItem>
+                <ComboBoxItem>3</ComboBoxItem>
+                <ComboBoxItem>4</ComboBoxItem>
+            </ComboBox>
+        </StackPanel>
+
+        <controls:CfPlot Name="Plot" Grid.Row="1" />
+    </Grid>
+</Window>

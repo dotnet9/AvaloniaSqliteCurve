@@ -35,6 +35,6 @@
 		<PackageReference Include="Semi.Avalonia" Version="11.2.0-beta1" />
 		<PackageReference Include="Semi.Avalonia.ColorPicker" Version="11.1.0.5-beta1" />
 		<PackageReference Include="Semi.Avalonia.DataGrid" Version="11.1.0.5-beta1" />
-		<PackageReference Include="YY-Thunks" Version="1.1.4-Beta4" />
+		<PackageReference Include="YY-Thunks" Version="1.1.4-Beta5" />
 	</ItemGroup>
 </Project>

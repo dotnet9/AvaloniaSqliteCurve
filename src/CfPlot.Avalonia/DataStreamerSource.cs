@@ -15,13 +15,18 @@ public class DataStreamerSource(double[] data)
     {
         Data[NextIndex] = value;
         ++NextIndex;
+
         if (NextIndex >= Data.Length)
             NextIndex = 0;
+
         NewestIndex = NextIndex - 1;
+
         if (NewestIndex < 0)
             NewestIndex = Data.Length - 1;
+
         DataMin = Math.Min(value, DataMin);
         DataMax = Math.Max(value, DataMax);
+
         ++CountTotal;
     }
 

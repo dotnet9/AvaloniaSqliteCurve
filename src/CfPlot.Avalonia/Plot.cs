@@ -2,10 +2,11 @@
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Threading;
+using CfPlot.Avalonia.Plottables;
 
 namespace CfPlot.Avalonia;
 
-public class CfPlot : Control
+public class Plot : Control
 {
     public List<DataStreamer> DataStreams { get; } = new();
 

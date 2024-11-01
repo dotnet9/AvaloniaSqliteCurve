@@ -33,6 +33,6 @@
             </ComboBox>
         </StackPanel>
 
-        <controls:CfPlot Name="Plot" Grid.Row="1" />
+        <controls:Plot Name="Plot" Grid.Row="1" />
     </Grid>
 </Window>

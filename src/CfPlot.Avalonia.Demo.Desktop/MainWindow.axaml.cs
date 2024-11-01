@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using CfPlot.Avalonia.Plottables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -80,12 +81,13 @@ namespace CfPlot.Avalonia.Demo.Desktop
         private void RefreshCharts()
         {
             _addTimer = new() { Interval = _addInterval };
+            var screenHeight = Screens.Primary?.Bounds.Height ?? 300;
             _addTimer.Elapsed += (s, e) =>
             {
                 for (var i = 0; i < _lineCount; i++)
                 {
-                    var value = DateTime.Now.Ticks * (DateTime.Now.Ticks % 5 == 1 ? -1.0 : 1.0) % 300;
-                    //_streamers[i].Add(value);
+                    var value = DateTime.Now.Ticks * (DateTime.Now.Ticks % 5 == 1 ? -1.0 : 1.0) % screenHeight;
+                    _streamers[i].Add(value);
                 }
             };
 
@@ -106,10 +108,10 @@ namespace CfPlot.Avalonia.Demo.Desktop
         {
             for (var i = 0; i < _lineCount; i++)
             {
-                for (var j = 0; j < 10; j++)
+                for (var j = 0; j < 1000; j++)
                 {
                     var value = DateTime.Now.Ticks * (DateTime.Now.Ticks % 5 == 1 ? -1.0 : 1.0) % 300;
-                    //_streamers[i].Add(value);
+                    _streamers[i].Add(value);
                 }
             }
             if (_streamers.Any())

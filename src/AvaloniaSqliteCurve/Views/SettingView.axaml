@@ -8,17 +8,45 @@
 	<StackPanel Orientation="Horizontal">
         <Button Content="色彩" Click="Button_OnClick"/>
         <TextBlock Text="背景色" VerticalAlignment="Center" />
-        <ColorPicker ColorSpectrumShape="Box" Name="BackgroundColorPicker"
+        <ColorPicker Name="BackgroundColorPicker"
                      ColorChanged="ChangeBackgroundColor_OnColorChanged">
-            <ColorPicker.Palette>
-                <colorPicker:SemiColorLightPalette />
-            </ColorPicker.Palette>
+			<ColorPicker.Content>
+                <Border
+                    Margin="1"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Background="{Binding $parent[ColorPicker].HsvColor, 
+                                                     Converter={StaticResource ToBrushConverter}}"
+                    CornerRadius="1" />
+            </ColorPicker.Content>
+            <ColorPicker.Styles>
+                <Style Selector="DropDownButton">
+                    <Setter Property="Padding" Value="0"/>
+                    <Style Selector="^ /template/ PathIcon">
+                        <Setter Property="IsVisible" Value="False"/>
+                    </Style>
+                </Style>
+            </ColorPicker.Styles>
         </ColorPicker>
         <TextBlock Text="网格色" Margin="5 0" VerticalAlignment="Center" />
-        <ColorPicker ColorSpectrumShape="Box" Name="GridColorPicker" ColorChanged="GridColorPicker_OnColorChanged">
-            <ColorPicker.Palette>
-                <colorPicker:SemiColorLightPalette />
-            </ColorPicker.Palette>
+        <ColorPicker Name="GridColorPicker" ColorChanged="GridColorPicker_OnColorChanged">
+            <ColorPicker.Content>
+                <Border
+                    Margin="1"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Background="{Binding $parent[ColorPicker].HsvColor, 
+                                                     Converter={StaticResource ToBrushConverter}}"
+                    CornerRadius="1" />
+            </ColorPicker.Content>
+            <ColorPicker.Styles>
+                <Style Selector="DropDownButton">
+                    <Setter Property="Padding" Value="0"/>
+                    <Style Selector="^ /template/ PathIcon">
+                        <Setter Property="IsVisible" Value="False"/>
+                    </Style>
+                </Style>
+            </ColorPicker.Styles>
         </ColorPicker>
         <ToggleButton Content="显示网格" Click="ShowGird_OnClick" IsChecked="True" Margin="5 0" />
         <TextBlock Text="网格线型" VerticalAlignment="Center" />

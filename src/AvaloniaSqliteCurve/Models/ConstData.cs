@@ -4,6 +4,8 @@ public class ConstData
 {
     public const int LineCount = 16;
     public const int DisplayMaxPointsCount = 2000;
+    public const float DefaultLineWidth = 0.5f;
+
     public const double MinBottom = -300.0;
     public const double MaxTop = 300.0;
 

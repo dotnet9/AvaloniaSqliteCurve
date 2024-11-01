@@ -28,13 +28,13 @@
 		<PackageReference Include="Avalonia.ReactiveUI" Version="11.2.0" />
 		<PackageReference Include="CodeWF.LogViewer.Avalonia" Version="1.0.5.4" />
 		<PackageReference Include="CodeWF.Tools" Version="1.2.5.4" />
-		<PackageReference Include="Irihi.Ursa" Version="1.4.0" />
-		<PackageReference Include="Irihi.Ursa.Themes.Semi" Version="1.4.0" />
+		<PackageReference Include="Irihi.Ursa" Version="1.5.0" />
+		<PackageReference Include="Irihi.Ursa.Themes.Semi" Version="1.5.0" />
 		<PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc4.5" />
 		<PackageReference Include="ScottPlot.Avalonia" Version="5.0.42" />
-		<PackageReference Include="Semi.Avalonia" Version="11.2.0-beta1" />
-		<PackageReference Include="Semi.Avalonia.ColorPicker" Version="11.1.0.5-beta1" />
-		<PackageReference Include="Semi.Avalonia.DataGrid" Version="11.1.0.5-beta1" />
+		<PackageReference Include="Semi.Avalonia" Version="11.2.0" />
+		<PackageReference Include="Semi.Avalonia.ColorPicker" Version="11.2.0" />
+		<PackageReference Include="Semi.Avalonia.DataGrid" Version="11.2.0" />
 		<PackageReference Include="YY-Thunks" Version="1.1.4-Beta5" />
 	</ItemGroup>
 </Project>

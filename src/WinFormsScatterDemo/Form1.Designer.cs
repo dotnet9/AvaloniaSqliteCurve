@@ -28,30 +28,21 @@
         /// </summary>
         private void InitializeComponent()
         {
-            MyFormsPlot = new ScottPlot.WinForms.FormsPlot();
             PanelOuter = new TableLayoutPanel();
             PanelConfig = new Panel();
-            ChkBoxCreateNaN = new CheckBox();
             BtnUpdate = new Button();
+            ChkBoxCreateNaN = new CheckBox();
+            MyFormsPlot = new ScottPlot.FormsPlot();
             PanelOuter.SuspendLayout();
             PanelConfig.SuspendLayout();
             SuspendLayout();
-            // 
-            // MyFormsPlot
-            // 
-            MyFormsPlot.DisplayScale = 1F;
-            MyFormsPlot.Dock = DockStyle.Fill;
-            MyFormsPlot.Location = new Point(3, 53);
-            MyFormsPlot.Name = "MyFormsPlot";
-            MyFormsPlot.Size = new Size(794, 394);
-            MyFormsPlot.TabIndex = 0;
             // 
             // PanelOuter
             // 
             PanelOuter.ColumnCount = 1;
             PanelOuter.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            PanelOuter.Controls.Add(MyFormsPlot, 0, 1);
             PanelOuter.Controls.Add(PanelConfig, 0, 0);
+            PanelOuter.Controls.Add(MyFormsPlot, 0, 1);
             PanelOuter.Dock = DockStyle.Fill;
             PanelOuter.Location = new Point(0, 0);
             PanelOuter.Name = "PanelOuter";
@@ -71,6 +62,16 @@
             PanelConfig.Size = new Size(794, 44);
             PanelConfig.TabIndex = 1;
             // 
+            // BtnUpdate
+            // 
+            BtnUpdate.Location = new Point(120, 7);
+            BtnUpdate.Name = "BtnUpdate";
+            BtnUpdate.Size = new Size(75, 23);
+            BtnUpdate.TabIndex = 1;
+            BtnUpdate.Text = "生成曲线";
+            BtnUpdate.UseVisualStyleBackColor = true;
+            BtnUpdate.Click += BtnUpdate_Click;
+            // 
             // ChkBoxCreateNaN
             // 
             ChkBoxCreateNaN.AutoSize = true;
@@ -81,15 +82,14 @@
             ChkBoxCreateNaN.Text = "含有NaN值";
             ChkBoxCreateNaN.UseVisualStyleBackColor = true;
             // 
-            // BtnUpdate
+            // MyFormsPlot
             // 
-            BtnUpdate.Location = new Point(120, 7);
-            BtnUpdate.Name = "BtnUpdate";
-            BtnUpdate.Size = new Size(75, 23);
-            BtnUpdate.TabIndex = 1;
-            BtnUpdate.Text = "生成曲线";
-            BtnUpdate.UseVisualStyleBackColor = true;
-            BtnUpdate.Click += BtnUpdate_Click;
+            MyFormsPlot.Dock = DockStyle.Fill;
+            MyFormsPlot.Location = new Point(4, 53);
+            MyFormsPlot.Margin = new Padding(4, 3, 4, 3);
+            MyFormsPlot.Name = "MyFormsPlot";
+            MyFormsPlot.Size = new Size(792, 394);
+            MyFormsPlot.TabIndex = 2;
             // 
             // Form1
             // 
@@ -107,10 +107,10 @@
 
         #endregion
 
-        private ScottPlot.WinForms.FormsPlot MyFormsPlot;
         private TableLayoutPanel PanelOuter;
         private Panel PanelConfig;
         private Button BtnUpdate;
         private CheckBox ChkBoxCreateNaN;
+        private ScottPlot.FormsPlot MyFormsPlot;
     }
 }

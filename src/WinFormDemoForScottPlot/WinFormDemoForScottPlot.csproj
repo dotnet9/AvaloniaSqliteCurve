@@ -20,7 +20,7 @@
 		<PackageReference Include="WinFormsComInterop" Version="0.5.0" />
 	</ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ScottPlot.WinForms" Version="5.0.43" />
+    <PackageReference Include="ScottPlot.WinForms" Version="5.0.47" />
   </ItemGroup>
 
 </Project>

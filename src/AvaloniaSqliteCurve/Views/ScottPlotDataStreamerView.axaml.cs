@@ -139,8 +139,16 @@ public partial class ScottPlotDataStreamerView : UserControl
     {
         for (var i = 0; i < ConstData.LineCount; i++)
         {
-            var value = DateTime.Now.Ticks * (DateTime.Now.Ticks % 5 == 1 ? -1.0 : 1.0) % 300;
-            _streamers[i].Add(value);
+            // Test Add NaN
+            if (DateTime.Now.Ticks % 5 >= 1)
+            {
+                _streamers[i].Add(double.NaN);
+            }
+            else
+            {
+                var value = DateTime.Now.Ticks * (DateTime.Now.Ticks % 5 == 1 ? -1.0 : 1.0) % 300;
+                _streamers[i].Add(value);
+            }
         }
     }
 

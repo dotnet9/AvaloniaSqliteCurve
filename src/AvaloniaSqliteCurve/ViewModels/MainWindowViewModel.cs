@@ -19,6 +19,11 @@ public class MainWindowViewModel : ViewModelBase
         new ScottPlotDataStreamerDemo().Show();
     }
 
+    public void ExecuteShowDataStreamerWithNaNHandler()
+    {
+        new DataStreamerWithNaN().Show();
+    }
+
     public void ExecuteShowScottPlotSignalHandler()
     {
         new ScottPlotSignalDemo().Show();

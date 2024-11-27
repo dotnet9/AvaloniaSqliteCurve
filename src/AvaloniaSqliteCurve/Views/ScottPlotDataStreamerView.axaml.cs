@@ -140,7 +140,7 @@ public partial class ScottPlotDataStreamerView : UserControl
         for (var i = 0; i < ConstData.LineCount; i++)
         {
             // Test Add NaN
-            if (DateTime.Now.Ticks % 5 >= 1)
+            if (DateTime.Now.Ticks % 5 >= 3)
             {
                 _streamers[i].Add(double.NaN);
             }
@@ -180,6 +180,7 @@ public partial class ScottPlotDataStreamerView : UserControl
         {
             var point = PointListView.ViewModel!.Points[i];
             var streamer = plot.Plot.Add.DataStreamer(ConstData.DisplayMaxPointsCount);
+            streamer.MarkerStyle.IsVisible = false;
             streamer.Color = point.LineColor.Value.ToScottPlotColor();
             streamer.LineWidth = point.LineWidth;
             streamer.ManageAxisLimits = false;

@@ -1,0 +1,53 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Design.PreviewWith>
+    <Border Padding="20">
+      <UniformGrid Columns="4" Width="30" Height="30">
+          <Rectangle Fill="{StaticResource Color0}" />
+          <Rectangle Fill="{StaticResource Color1}" />
+		  <Rectangle Fill="{StaticResource Color2}" />
+		  <Rectangle Fill="{StaticResource Color3}" />
+		  <Rectangle Fill="{StaticResource Color4}" />
+		  <Rectangle Fill="{StaticResource Color5}" />
+		  <Rectangle Fill="{StaticResource Color6}" />
+		  <Rectangle Fill="{StaticResource Color7}" />
+		  <Rectangle Fill="{StaticResource Color8}" />
+		  <Rectangle Fill="{StaticResource Color9}" />
+		  <Rectangle Fill="{StaticResource Color10}" />
+		  <Rectangle Fill="{StaticResource Color11}" />
+		  <Rectangle Fill="{StaticResource Color12}" />
+		  <Rectangle Fill="{StaticResource Color13}" />
+		  <Rectangle Fill="{StaticResource Color14}" />
+		  <Rectangle Fill="{StaticResource Color15}" />
+		  <Rectangle Fill="{StaticResource Color16}" />
+		  <Rectangle Fill="{StaticResource Color17}" />
+          <Rectangle Fill="{StaticResource Color18}" />
+          <Rectangle Fill="{StaticResource Color19}" />
+      </UniformGrid>
+    </Border>
+  </Design.PreviewWith>
+
+  <!-- Add Styles Here -->
+  <Styles.Resources>
+      <Color x:Key="Color0">#1f77b4</Color>
+      <Color x:Key="Color1">#aec7e8</Color>
+      <Color x:Key="Color2">#ff7f0e</Color>
+      <Color x:Key="Color3">#ffbb78</Color>
+      <Color x:Key="Color4">#2ca02c</Color>
+      <Color x:Key="Color5">#98df8a</Color>
+      <Color x:Key="Color6">#d62728</Color>
+      <Color x:Key="Color7">#ff9896</Color>
+      <Color x:Key="Color8">#9467bd</Color>
+      <Color x:Key="Color9">#c5b0d5</Color>
+      <Color x:Key="Color10">#8c564b</Color>
+      <Color x:Key="Color11">#c49c94</Color>
+      <Color x:Key="Color12">#e377c2</Color>
+      <Color x:Key="Color13">#f7b6d2</Color>
+      <Color x:Key="Color14">#7f7f7f</Color>
+      <Color x:Key="Color15">#c7c7c7</Color>
+      <Color x:Key="Color16">#bcbd22</Color>
+      <Color x:Key="Color17">#dbdb8d</Color>
+      <Color x:Key="Color18">#17becf</Color>
+      <Color x:Key="Color19">#9edae5</Color>
+  </Styles.Resources>
+</Styles>

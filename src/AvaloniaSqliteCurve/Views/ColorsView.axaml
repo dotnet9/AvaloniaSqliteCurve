@@ -14,21 +14,25 @@
         </Style>
     </Window.Styles>
     <UniformGrid Columns="4">
-        <Border Background="#DC143C" />
-        <Border Background="#FFA500" />
-        <Border Background="#FF1493" />
-        <Border Background="#4B0082" />
-        <Border Background="#7FFF00" />
-        <Border Background="#8B008B" />
-        <Border Background="#0000FF" />
-        <Border Background="#FF9BD100" />
-        <Border Background="#191970" />
-        <Border Background="#0165FC" />
-        <Border Background="#05FFA6" />
-        <Border Background="#430541" />
-        <Border Background="#006400" />
-        <Border Background="#FF62C3F5" />
-        <Border Background="#FF0000" />
-        <Border Background="#FF63E9" />
+		<Rectangle Fill="{StaticResource Color0}" />
+        <Rectangle Fill="{StaticResource Color1}" />
+        <Rectangle Fill="{StaticResource Color2}" />
+        <Rectangle Fill="{StaticResource Color3}" />
+        <Rectangle Fill="{StaticResource Color4}" />
+        <Rectangle Fill="{StaticResource Color5}" />
+        <Rectangle Fill="{StaticResource Color6}" />
+        <Rectangle Fill="{StaticResource Color7}" />
+        <Rectangle Fill="{StaticResource Color8}" />
+        <Rectangle Fill="{StaticResource Color9}" />
+        <Rectangle Fill="{StaticResource Color10}" />
+        <Rectangle Fill="{StaticResource Color11}" />
+        <Rectangle Fill="{StaticResource Color12}" />
+        <Rectangle Fill="{StaticResource Color13}" />
+        <Rectangle Fill="{StaticResource Color14}" />
+        <Rectangle Fill="{StaticResource Color15}" />
+        <Rectangle Fill="{StaticResource Color16}" />
+        <Rectangle Fill="{StaticResource Color17}" />
+        <Rectangle Fill="{StaticResource Color18}" />
+        <Rectangle Fill="{StaticResource Color19}" />
     </UniformGrid>
 </Window>
